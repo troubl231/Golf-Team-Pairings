@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Golf Team Pairing Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; background: #f7f7f7; color: #222; }
+    h1, h2 { color: #225522; }
+    .container { max-width: 1150px; margin: auto; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.12); }
+    .section { margin-top: 24px; padding: 16px; border: 1px solid #ddd; border-radius: 10px; background: #fafafa; }
+    .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin-top: 10px; }
+    label { display: flex; gap: 6px; align-items: center; }
+    button { margin: 6px 4px 6px 0; padding: 9px 14px; border: none; border-radius: 7px; background: #2f6f3e; color: white; font-weight: bold; cursor: pointer; }
+    button.secondary { background: #666; }
+    button.danger { background: #9a3030; }
+    button.small { padding: 4px 8px; font-size: 12px; }
+    button:hover { opacity: .9; }
+    input[type="text"], select { padding: 8px; width: 240px; max-width: 90%; margin: 4px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; background: white; }
+    th, td { border: 1px solid #ddd; padding: 9px; text-align: left; vertical-align: top; }
+    th { background: #e6f0e8; }
+    .note { color: #555; font-size: 14px; line-height: 1.4; }
+    .warning { color: #8a4b00; font-weight: bold; }
+    .team-card { padding: 9px; margin: 6px 0; border: 1px solid #d6d6d6; border-radius: 8px; background: white; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+    @media print {
+      button, .controls, .master-list, .history-section, .note, .team-management { display: none !important; }
+      body { margin: 0; background: white; }
+      .container { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Golf Team Pairing Generator</h1>
+  <p class="note">
+    Select who is playing this week. Regular teams stay together when both partners are present.
+    If only one teammate is playing, that person is automatically reassigned for the week.
+  </p>
+
+  <div class="section master-list">
+    <h2>Players This Week</h2>
+    <div class="controls">
+      <button onclick="selectAll()">Select All</button>
+      <button class="secondary" onclick="clearAll()">Clear All</button>
+      <input id="newGolfer" type="text" placeholder="Add golfer or guest" />
+      <button onclick="addGolfer()">Add Golfer</button>
+    </div>
+    <div id="playerList" class="player-grid"></div>
+  </div>
+
+  <div class="section team-management">
+    <h2>Manage Regular Teams</h2>
+    <p class="note">Add regular two-person teams here. These are saved in this browser and can be changed anytime.</p>
+    <div class="controls-row">
+      <select id="teamPlayer1"></select>
+      <span>&</span>
+      <select id="teamPlayer2"></select>
+      <button onclick="addTeam()">Add Team</button>
+    </div>
+    <div id="teamSetup"></div>
+  </div>
+
+  <div class="section">
+    <h2>This Week's Team Pairings</h2>
+    <div class="controls">
+      <button onclick="generateAndSave()">Generate & Save Week</button>
+      <button class="secondary" onclick="previewPairings()">Preview / Recalculate</button>
+      <button class="secondary" onclick="window.print()">Print</button>
+      <button class="danger" onclick="clearHistory()">Clear History</button>
+    </div>
+    <p id="status" class="note"></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Team 1</th>
+          <th>Team 2</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="pairingsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="section history-section">
+    <h2>Saved History</h2>
+    <p class="note">History is saved in this browser on this computer.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Pairings</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const defaultGolfers = [
+  "Tami Divietro",
+  "Dara Taylor",
+  "Helen Norman",
+  "Mary McCormick",
+  "Michele Lang",
+  "Julie Parker",
+  "Sue O'Rourke",
+  "Cynthia Cottrill",
+  "Hannah Campbell",
+  "Candy Crim",
+  "Caroline Taylor",
+  "Rebekah Wills",
+  "Jane Beckwith",
+  "Shannon Bertram",
+  "Jennifer Dean",
+  "Betty Glarner",
+  "Tammy Howard",
+  "Becky Lucas",
+  "Andria McHargue",
+  "Terrie Springer",
+  "Shiela Tubbs",
+  "Tania Bobe"
+];
+
+const defaultTeams = [
+  ["Tami Divietro", "Candy Crim"],
+  ["Julie Parker", "Shiela Tubbs"],
+  ["Rebekah Wills", "Shannon Bertram"],
+  ["Dara Taylor", "Caroline Taylor"]
+];
+
+let golfers = JSON.parse(localStorage.getItem("golfers_fullname_team_app1")) || defaultGolfers;
+let selected = JSON.parse(localStorage.getItem("selected_fullname_team_app1")) || golfers;
+let regularTeams = JSON.parse(localStorage.getItem("regular_fullname_teams_app1")) || defaultTeams;
+let history = JSON.parse(localStorage.getItem("team_pairing_history_fullname_app1")) || [];
+let latestPreview = [];
+
+function saveState() {
+  localStorage.setItem("golfers_fullname_team_app1", JSON.stringify(golfers));
+  localStorage.setItem("selected_fullname_team_app1", JSON.stringify(selected));
+  localStorage.setItem("regular_fullname_teams_app1", JSON.stringify(regularTeams));
+  localStorage.setItem("team_pairing_history_fullname_app1", JSON.stringify(history));
+}
+
+function renderPlayers() {
+  const list = document.getElementById("playerList");
+  list.innerHTML = "";
+
+  golfers.forEach(name => {
+    const wrapper = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = selected.includes(name);
+    checkbox.onchange = () => {
+      if (checkbox.checked) {
+        if (!selected.includes(name)) selected.push(name);
+      } else {
+        selected = selected.filter(x => x !== name);
+      }
+      saveState();
+      previewPairings();
+    };
+
+    const span = document.createElement("span");
+    span.textContent = name;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "x";
+    removeBtn.className = "danger small";
+    removeBtn.style.marginLeft = "auto";
+    removeBtn.onclick = (e) => {
+      e.preventDefault();
+      golfers = golfers.filter(x => x !== name);
+      selected = selected.filter(x => x !== name);
+      regularTeams = regularTeams.filter(team => !team.includes(name));
+      saveState();
+      renderAll();
+      previewPairings();
+    };
+
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(span);
+    wrapper.appendChild(removeBtn);
+    list.appendChild(wrapper);
+  });
+}
+
+function renderTeamDropdowns() {
+  const p1 = document.getElementById("teamPlayer1");
+  const p2 = document.getElementById("teamPlayer2");
+  p1.innerHTML = "";
+  p2.innerHTML = "";
+
+  golfers.forEach(name => {
+    const option1 = document.createElement("option");
+    option1.value = name;
+    option1.textContent = name;
+    p1.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = name;
+    option2.textContent = name;
+    p2.appendChild(option2);
+  });
+
+  if (golfers.length > 1) p2.selectedIndex = 1;
+}
+
+function renderTeamSetup() {
+  const box = document.getElementById("teamSetup");
+  box.innerHTML = "";
+
+  if (regularTeams.length === 0) {
+    box.innerHTML = `<p class="warning">No regular teams saved yet.</p>`;
+    return;
+  }
+
+  regularTeams.forEach((team, index) => {
+    const div = document.createElement("div");
+    div.className = "team-card";
+
+    const text = document.createElement("span");
+    text.textContent = `Team ${index + 1}: ${team.join(" & ")}`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove Team";
+    removeBtn.className = "danger small";
+    removeBtn.onclick = () => {
+      regularTeams.splice(index, 1);
+      saveState();
+      renderAll();
+      previewPairings();
+    };
+
+    div.appendChild(text);
+    div.appendChild(removeBtn);
+    box.appendChild(div);
+  });
+}
+
+function addTeam() {
+  const a = document.getElementById("teamPlayer1").value;
+  const b = document.getElementById("teamPlayer2").value;
+
+  if (!a || !b) return;
+  if (a === b) {
+    alert("Please choose two different golfers.");
+    return;
+  }
+
+  const alreadyOnTeam = regularTeams.some(team => team.includes(a) || team.includes(b));
+  if (alreadyOnTeam) {
+    if (!confirm("One of these golfers is already on a regular team. Add this team anyway?")) return;
+  }
+
+  const exists = regularTeams.some(team => team.includes(a) && team.includes(b));
+  if (exists) {
+    alert("That team already exists.");
+    return;
+  }
+
+  regularTeams.push([a, b]);
+  saveState();
+  renderAll();
+  previewPairings();
+}
+
+function addGolfer() {
+  const input = document.getElementById("newGolfer");
+  const name = input.value.trim();
+  if (!name) return;
+  if (!golfers.includes(name)) golfers.push(name);
+  if (!selected.includes(name)) selected.push(name);
+  input.value = "";
+  saveState();
+  renderAll();
+  previewPairings();
+}
+
+function selectAll() {
+  selected = [...golfers];
+  saveState();
+  renderAll();
+  previewPairings();
+}
+
+function clearAll() {
+  selected = [];
+  saveState();
+  renderAll();
+  previewPairings();
+}
+
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getPairKey(teamA, teamB) {
+  const a = [...teamA].sort().join("/");
+  const b = [...teamB].sort().join("/");
+  return [a, b].sort().join(" vs ");
+}
+
+function countRepeatScore(matches) {
+  const oldKeys = new Set();
+  history.forEach(week => {
+    week.matches.forEach(match => oldKeys.add(match.key));
+  });
+
+  let score = 0;
+  matches.forEach(match => {
+    if (oldKeys.has(match.key)) score += 1;
+  });
+  return score;
+}
+
+function buildTeams() {
+  const playingSet = new Set(selected);
+  const used = new Set();
+  const fullTeams = [];
+  const singles = [];
+
+  regularTeams.forEach(team => {
+    const present = team.filter(name => playingSet.has(name));
+
+    if (present.length === 2 && !used.has(present[0]) && !used.has(present[1])) {
+      fullTeams.push({ players: present, note: "Regular team" });
+      used.add(present[0]);
+      used.add(present[1]);
+    } else if (present.length === 1 && !used.has(present[0])) {
+      singles.push(present[0]);
+      used.add(present[0]);
+    }
+  });
+
+  selected.forEach(name => {
+    if (!used.has(name)) singles.push(name);
+  });
+
+  const shuffledSingles = shuffle(singles);
+
+  while (shuffledSingles.length >= 2) {
+    const a = shuffledSingles.shift();
+    const b = shuffledSingles.shift();
+    fullTeams.push({ players: [a, b], note: "Adjusted team" });
+  }
+
+  if (shuffledSingles.length === 1) {
+    fullTeams.push({ players: [shuffledSingles[0]], note: "Single / needs partner" });
+  }
+
+  return shuffle(fullTeams);
+}
+
+function createMatches() {
+  let bestMatches = [];
+  let bestScore = Infinity;
+
+  for (let attempt = 0; attempt < 500; attempt++) {
+    const teams = buildTeams();
+    const matches = [];
+
+    while (teams.length >= 2) {
+      const team1 = teams.shift();
+      const team2 = teams.shift();
+      matches.push({
+        team1: team1.players,
+        team2: team2.players,
+        note: `${team1.note}; ${team2.note}`,
+        key: getPairKey(team1.players, team2.players)
+      });
+    }
+
+    if (teams.length === 1) {
+      const leftover = teams.shift();
+      matches.push({
+        team1: leftover.players,
+        team2: [],
+        note: leftover.players.length === 1 ? "Odd golfer out / needs placement" : "Odd team out",
+        key: `BYE: ${leftover.players.join("/")}`
+      });
+    }
+
+    const score = countRepeatScore(matches);
+    if (score < bestScore) {
+      bestScore = score;
+      bestMatches = matches;
+      if (score === 0) break;
+    }
+  }
+
+  return bestMatches;
+}
+
+function previewPairings() {
+  latestPreview = createMatches();
+  renderPairings(latestPreview);
+  const status = document.getElementById("status");
+  const count = selected.length;
+  status.textContent = `${count} golfer${count === 1 ? "" : "s"} selected. Pairings automatically adjusted.`;
+}
+
+function renderPairings(matches) {
+  const body = document.getElementById("pairingsBody");
+  body.innerHTML = "";
+
+  if (matches.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="4" class="warning">No players selected.</td>`;
+    body.appendChild(row);
+    return;
+  }
+
+  matches.forEach((match, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>Match ${index + 1}</td>
+      <td>${match.team1.join(" & ") || "-"}</td>
+      <td>${match.team2.join(" & ") || "-"}</td>
+      <td>${match.note}</td>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function generateAndSave() {
+  latestPreview = createMatches();
+
+  const weekNumber = history.length + 1;
+  history.push({
+    week: weekNumber,
+    date: new Date().toLocaleDateString(),
+    matches: latestPreview
+  });
+
+  saveState();
+  renderPairings(latestPreview);
+  renderHistory();
+  document.getElementById("status").textContent = `Week ${weekNumber} saved.`;
+}
+
+function renderHistory() {
+  const body = document.getElementById("historyBody");
+  body.innerHTML = "";
+
+  if (history.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="2">No saved weeks yet.</td>`;
+    body.appendChild(row);
+    return;
+  }
+
+  history.slice().reverse().forEach(week => {
+    const row = document.createElement("tr");
+    const pairText = week.matches.map((m, i) => {
+      const t1 = m.team1.join(" & ") || "-";
+      const t2 = m.team2.join(" & ") || "-";
+      return `Match ${i + 1}: ${t1} vs ${t2}`;
+    }).join("<br>");
+    row.innerHTML = `<td>Week ${week.week}<br>${week.date}</td><td>${pairText}</td>`;
+    body.appendChild(row);
+  });
+}
+
+function clearHistory() {
+  if (!confirm("Clear all saved pairing history?")) return;
+  history = [];
+  saveState();
+  renderHistory();
+  previewPairings();
+}
+
+function renderAll() {
+  renderPlayers();
+  renderTeamDropdowns();
+  renderTeamSetup();
+  renderHistory();
+}
+
+renderAll();
+previewPairings();
+</script>
+</body>
+</html>
