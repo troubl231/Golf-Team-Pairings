@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)file://slg-ds1/home/Downloads/ladies_golf_tracker_with_june14_seeded%20(1).html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ladies Golf League Tracker</title>
+<style>
+:root{
+  --purple:#6A4C93; --blue:#5B8DEF; --gray:#6C757D; --light:#F4F1FA;
+  --white:#fff; --text:#222; --gold:#FFF3CD; --silver:#E9ECEF; --bronze:#F8D7C3;
+}
+body{font-family:Arial,sans-serif;margin:14px;background:linear-gradient(135deg,var(--light),#EEF4FF);color:var(--text)}
+.container{max-width:1250px;margin:auto;background:white;padding:20px;border-radius:18px;box-shadow:0 4px 18px rgba(75,65,110,.18)}
+h1{color:var(--purple);margin:.2rem 0} h1:before{content:"⛳ "} h2{color:var(--purple);border-bottom:2px solid var(--blue);padding-bottom:5px}
+.section{margin-top:18px;padding:14px;border:1px solid #d8d0e8;border-radius:14px;background:var(--light)}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.tab{background:#e9ecef;color:#333}.tab.active{background:var(--purple);color:white}
+button{margin:5px 3px;padding:10px 14px;border:none;border-radius:10px;background:var(--purple);color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:var(--gray)} button.danger{background:#9a3030} button:hover{background:#3F72D8}
+input,select{padding:8px;margin:3px;border:1px solid #c8bedb;border-radius:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;margin-top:10px;background:white;border-radius:10px;overflow:hidden}
+th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top} th{background:var(--blue);color:white} tr:nth-child(even) td{background:#fbfaff}
+.note{color:#555;font-size:14px;line-height:1.35}.warning{color:#8a4b00;font-weight:bold}.hidden{display:none}
+.controls-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+label.checkline{display:flex;gap:7px;align-items:center;background:#fff;padding:7px;border-radius:9px;border:1px solid #e0d8ef}
+.score-input{width:78px}.tiny-input{width:58px}.money-input{width:88px}
+.card{background:white;border:1px solid #d6d0e5;border-radius:12px;padding:12px;margin:9px 0}.pill{display:inline-block;border:1px solid var(--blue);border-radius:7px;padding:4px 7px;margin:4px 3px 0 0;background:#f7fbff;color:#2862b9;font-weight:bold;font-size:13px}
+.fund-card{background:white;border:1px solid #d6d0e5;border-radius:12px;padding:14px;margin:8px;min-width:210px}.fund-card .amount{font-size:22px;font-weight:bold;color:var(--purple)}
+.place1 td{background:var(--gold)!important}.place2 td{background:var(--silver)!important}.place3 td{background:var(--bronze)!important}
+@media(max-width:700px){body{margin:6px}.container{padding:12px}.tabs button{width:calc(50% - 6px)}button{width:100%;font-size:15px}table{font-size:12px}th,td{padding:6px}.player-grid{grid-template-columns:1fr}}
+@media print{.no-print,.tabs,.pairing-only{display:none!important}body{background:white}.container{box-shadow:none}.section{background:white;border:none}button{display:none!important}th{background:#d8e6ff!important;color:#222!important}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Ladies Golf League Tracker</h1>
+<p class="note no-print">Tracks pairings, weekly paid-to-play money, points payouts, closest-to-pin holes and rollovers, trip payments, and season totals.</p><p class="note no-print" id="storageNotice">Saved data is stored on this device and carried forward from earlier tracker versions when available.</p>
+
+<div class="tabs no-print">
+  <button class="tab active" onclick="showTab(&#39;pairingsTab&#39;,this)">Pairings</button>
+  <button class="tab" onclick="showTab(&#39;roundTab&#39;,this)">Weekly Round</button>
+  <button class="tab" onclick="showTab(&#39;leaderboardTab&#39;,this)">Leaderboard</button>
+  <button class="tab" onclick="showTab(&#39;tripTab&#39;,this)">Trip Fund</button>
+  <button class="tab" onclick="showTab(&#39;reportsTab&#39;,this)">Reports</button>
+</div>
+
+<div id="pairingsTab">
+  <div class="section">
+    <h2>Players This Week</h2>
+    <div class="controls-row no-print">
+      <label>Round Date: <input type="date" id="pairingRoundDate" onchange="setRoundDateFromPairings()"></label>
+      <button onclick="selectAll()">Select All</button>
+      <button class="secondary" onclick="clearAll()">Clear All</button>
+      <button onclick="savePlayersThisWeek()">Save Players This Week</button>
+      <input id="newGolfer" placeholder="Add golfer or guest">
+      <button onclick="addGolfer()">Add Golfer</button>
+    </div>
+    <p id="totalPlayersThisWeek" style="font-weight:bold;margin-top:8px;">Total Players This Week: 22</p><div id="playerList" class="player-grid"><label class="checkline"><input type="checkbox">Andria McHargue</label><label class="checkline"><input type="checkbox">Becky Lucas</label><label class="checkline"><input type="checkbox">Betty Glarner</label><label class="checkline"><input type="checkbox">Candy Crim</label><label class="checkline"><input type="checkbox">Caroline Taylor</label><label class="checkline"><input type="checkbox">Cynthia Cottrill</label><label class="checkline"><input type="checkbox">Dara Taylor</label><label class="checkline"><input type="checkbox">Hannah Campbell</label><label class="checkline"><input type="checkbox">Helen Norman</label><label class="checkline"><input type="checkbox">Jane Beckwith</label><label class="checkline"><input type="checkbox">Jennifer Dean</label><label class="checkline"><input type="checkbox">Julie Parker</label><label class="checkline"><input type="checkbox">Mary McCormick</label><label class="checkline"><input type="checkbox">Michele Lang</label><label class="checkline"><input type="checkbox">Rebekah Wills</label><label class="checkline"><input type="checkbox">Shannon Bertram</label><label class="checkline"><input type="checkbox">Shiela Tubbs</label><label class="checkline"><input type="checkbox">Sue O'Rourke</label><label class="checkline"><input type="checkbox">Tami Divietro</label><label class="checkline"><input type="checkbox">Tammy Howard</label><label class="checkline"><input type="checkbox">Tania Bobe</label><label class="checkline"><input type="checkbox">Terrie Springer</label></div>
+  </div>
+  <div class="section">
+    <h2>Manage Regular Teams</h2>
+    <div class="controls-row no-print"><select id="teamPlayer1"><option value="Tami Divietro">Tami Divietro</option><option value="Dara Taylor">Dara Taylor</option><option value="Helen Norman">Helen Norman</option><option value="Mary McCormick">Mary McCormick</option><option value="Michele Lang">Michele Lang</option><option value="Julie Parker">Julie Parker</option><option value="Sue O&#39;Rourke">Sue O'Rourke</option><option value="Cynthia Cottrill">Cynthia Cottrill</option><option value="Hannah Campbell">Hannah Campbell</option><option value="Candy Crim">Candy Crim</option><option value="Caroline Taylor">Caroline Taylor</option><option value="Rebekah Wills">Rebekah Wills</option><option value="Jane Beckwith">Jane Beckwith</option><option value="Shannon Bertram">Shannon Bertram</option><option value="Jennifer Dean">Jennifer Dean</option><option value="Betty Glarner">Betty Glarner</option><option value="Tammy Howard">Tammy Howard</option><option value="Becky Lucas">Becky Lucas</option><option value="Andria McHargue">Andria McHargue</option><option value="Terrie Springer">Terrie Springer</option><option value="Shiela Tubbs">Shiela Tubbs</option><option value="Tania Bobe">Tania Bobe</option></select><span>&amp;</span><select id="teamPlayer2"><option value="Tami Divietro">Tami Divietro</option><option value="Dara Taylor">Dara Taylor</option><option value="Helen Norman">Helen Norman</option><option value="Mary McCormick">Mary McCormick</option><option value="Michele Lang">Michele Lang</option><option value="Julie Parker">Julie Parker</option><option value="Sue O&#39;Rourke">Sue O'Rourke</option><option value="Cynthia Cottrill">Cynthia Cottrill</option><option value="Hannah Campbell">Hannah Campbell</option><option value="Candy Crim">Candy Crim</option><option value="Caroline Taylor">Caroline Taylor</option><option value="Rebekah Wills">Rebekah Wills</option><option value="Jane Beckwith">Jane Beckwith</option><option value="Shannon Bertram">Shannon Bertram</option><option value="Jennifer Dean">Jennifer Dean</option><option value="Betty Glarner">Betty Glarner</option><option value="Tammy Howard">Tammy Howard</option><option value="Becky Lucas">Becky Lucas</option><option value="Andria McHargue">Andria McHargue</option><option value="Terrie Springer">Terrie Springer</option><option value="Shiela Tubbs">Shiela Tubbs</option><option value="Tania Bobe">Tania Bobe</option></select><button onclick="addTeam()">Add Team</button></div>
+    <div id="teamSetup"><div class="card">Team 1: Tami Divietro &amp; Candy Crim <button class="danger no-print" onclick="removeTeam(0)">Remove</button></div><div class="card">Team 2: Julie Parker &amp; Shiela Tubbs <button class="danger no-print" onclick="removeTeam(1)">Remove</button></div><div class="card">Team 3: Rebekah Wills &amp; Shannon Bertram <button class="danger no-print" onclick="removeTeam(2)">Remove</button></div><div class="card">Team 4: Dara Taylor &amp; Caroline Taylor <button class="danger no-print" onclick="removeTeam(3)">Remove</button></div></div>
+  </div>
+  <div class="section">
+    <h2>This Week's Pairings</h2>
+    <div class="controls-row no-print">
+      <button onclick="previewPairings()">Preview / Recalculate</button>
+      <button class="secondary" onclick="showManualPairingEditor()">Edit Pairings Manually</button>
+      <button onclick="savePairingWeek()">Save Pairing Week</button>
+      <button class="secondary" onclick="window.print()">Print</button>
+    </div>
+    <p id="pairingStatus" class="note">22 golfers selected. Avoiding repeats from the last 3 saved pairing weeks when possible.</p>
+    <div id="manualPairingEditor" class="card hidden no-print"></div>
+    <table><thead><tr><th>Match</th><th>Team 1</th><th>Team 2</th><th>Notes</th></tr></thead><tbody id="pairingsBody"><tr><td>Match 1</td><td>Tami Divietro &amp; Candy Crim</td><td>Helen Norman &amp; Jennifer Dean</td><td>Regular team; Adjusted team</td></tr><tr><td>Match 2</td><td>Julie Parker &amp; Shiela Tubbs</td><td>Dara Taylor &amp; Caroline Taylor</td><td>Regular team; Regular team</td></tr><tr><td>Match 3</td><td>Jane Beckwith &amp; Andria McHargue</td><td>Sue O'Rourke &amp; Hannah Campbell</td><td>Adjusted team; Adjusted team</td></tr><tr><td>Match 4</td><td>Terrie Springer &amp; Betty Glarner</td><td>Tania Bobe &amp; Becky Lucas</td><td>Adjusted team; Adjusted team</td></tr><tr><td>Match 5</td><td>Michele Lang &amp; Mary McCormick</td><td>Tammy Howard &amp; Cynthia Cottrill</td><td>Adjusted team; Adjusted team</td></tr><tr><td>Match 6</td><td>Rebekah Wills &amp; Shannon Bertram</td><td>-</td><td>Odd team out</td></tr></tbody></table>
+  </div>
+</div>
+
+<div id="roundTab" class="hidden">
+  <div class="section">
+    <h2>Weekly Round Entry</h2>
+    <p class="note">This tab only shows the players selected and saved on the Pairings tab for the current week.</p>
+    <div class="controls-row">
+      <strong>Round Date:</strong> <span id="roundDateDisplay">06/21/2026</span>
+      <label>CTP Front Hole:
+        <select id="ctpFrontHole"><option value="3">Hole 3</option><option value="6">Hole 6</option></select>
+      </label>
+      <label>CTP Front Winner: <select id="ctpFront"><option value="">No winner / rollover</option><option value="Tami Divietro">Tami Divietro</option><option value="Dara Taylor">Dara Taylor</option><option value="Helen Norman">Helen Norman</option><option value="Mary McCormick">Mary McCormick</option><option value="Michele Lang">Michele Lang</option><option value="Julie Parker">Julie Parker</option><option value="Sue O&#39;Rourke">Sue O'Rourke</option><option value="Cynthia Cottrill">Cynthia Cottrill</option><option value="Hannah Campbell">Hannah Campbell</option><option value="Candy Crim">Candy Crim</option><option value="Caroline Taylor">Caroline Taylor</option><option value="Rebekah Wills">Rebekah Wills</option><option value="Jane Beckwith">Jane Beckwith</option><option value="Shannon Bertram">Shannon Bertram</option><option value="Jennifer Dean">Jennifer Dean</option><option value="Betty Glarner">Betty Glarner</option><option value="Tammy Howard">Tammy Howard</option><option value="Becky Lucas">Becky Lucas</option><option value="Andria McHargue">Andria McHargue</option><option value="Terrie Springer">Terrie Springer</option><option value="Shiela Tubbs">Shiela Tubbs</option><option value="Tania Bobe">Tania Bobe</option></select></label>
+      <label>Front CTP Amount Paid: <input class="money-input" type="number" step="0.5" id="frontCtpPaidOverride" placeholder="Auto"></label>
+      <label>CTP Back Hole:
+        <select id="ctpBackHole"><option value="11">Hole 11</option><option value="15">Hole 15</option><option value="17">Hole 17</option></select>
+      </label>
+      <label>CTP Back Winner: <select id="ctpBack"><option value="">No winner / rollover</option><option value="Tami Divietro">Tami Divietro</option><option value="Dara Taylor">Dara Taylor</option><option value="Helen Norman">Helen Norman</option><option value="Mary McCormick">Mary McCormick</option><option value="Michele Lang">Michele Lang</option><option value="Julie Parker">Julie Parker</option><option value="Sue O&#39;Rourke">Sue O'Rourke</option><option value="Cynthia Cottrill">Cynthia Cottrill</option><option value="Hannah Campbell">Hannah Campbell</option><option value="Candy Crim">Candy Crim</option><option value="Caroline Taylor">Caroline Taylor</option><option value="Rebekah Wills">Rebekah Wills</option><option value="Jane Beckwith">Jane Beckwith</option><option value="Shannon Bertram">Shannon Bertram</option><option value="Jennifer Dean">Jennifer Dean</option><option value="Betty Glarner">Betty Glarner</option><option value="Tammy Howard">Tammy Howard</option><option value="Becky Lucas">Becky Lucas</option><option value="Andria McHargue">Andria McHargue</option><option value="Terrie Springer">Terrie Springer</option><option value="Shiela Tubbs">Shiela Tubbs</option><option value="Tania Bobe">Tania Bobe</option></select></label>
+      <label>Back CTP Amount Paid: <input class="money-input" type="number" step="0.5" id="backCtpPaidOverride" placeholder="Auto"></label>
+    </div>
+    <p id="editingRoundNotice" class="warning"></p><div id="roundEntryBody"><p class="note"><strong>Players in this weekly round:</strong> Tami Divietro, Dara Taylor, Helen Norman, Mary McCormick, Michele Lang, Julie Parker, Sue O'Rourke, Cynthia Cottrill, Hannah Campbell, Candy Crim, Caroline Taylor, Rebekah Wills, Jane Beckwith, Shannon Bertram, Jennifer Dean, Betty Glarner, Tammy Howard, Becky Lucas, Andria McHargue, Terrie Springer, Shiela Tubbs, Tania Bobe</p><table><thead><tr><th>Play Paid?</th><th>Player</th><th>Pts Req</th><th>Score</th><th>Net</th><th>Trip Paid?</th></tr></thead><tbody><tr><td><input type="checkbox" id="playPaid_0" checked=""></td><td>Tami Divietro</td><td><input class="score-input" type="number" step="0.5" id="req_0" value="16"></td><td><input class="score-input" type="number" step="0.5" id="score_0" oninput="updateNet(0)"></td><td id="net_0">-</td><td><input type="checkbox" id="tripPaid_0"></td></tr><tr><td><input type="checkbox" id="playPaid_1" checked=""></td><td>Dara Taylor</td><td><input class="score-input" type="number" step="0.5" id="req_1" value="17.5"></td><td><input class="score-input" type="number" step="0.5" id="score_1" oninput="updateNet(1)"></td><td id="net_1">-</td><td><input type="checkbox" id="tripPaid_1"></td></tr><tr><td><input type="checkbox" id="playPaid_2" checked=""></td><td>Helen Norman</td><td><input class="score-input" type="number" step="0.5" id="req_2" value="10.5"></td><td><input class="score-input" type="number" step="0.5" id="score_2" oninput="updateNet(2)"></td><td id="net_2">-</td><td><input type="checkbox" id="tripPaid_2"></td></tr><tr><td><input type="checkbox" id="playPaid_3" checked=""></td><td>Mary McCormick</td><td><input class="score-input" type="number" step="0.5" id="req_3" value="12"></td><td><input class="score-input" type="number" step="0.5" id="score_3" oninput="updateNet(3)"></td><td id="net_3">-</td><td><input type="checkbox" id="tripPaid_3"></td></tr><tr><td><input type="checkbox" id="playPaid_4" checked=""></td><td>Michele Lang</td><td><input class="score-input" type="number" step="0.5" id="req_4" value="10"></td><td><input class="score-input" type="number" step="0.5" id="score_4" oninput="updateNet(4)"></td><td id="net_4">-</td><td><input type="checkbox" id="tripPaid_4"></td></tr><tr><td><input type="checkbox" id="playPaid_5" checked=""></td><td>Julie Parker</td><td><input class="score-input" type="number" step="0.5" id="req_5" value="7.5"></td><td><input class="score-input" type="number" step="0.5" id="score_5" oninput="updateNet(5)"></td><td id="net_5">-</td><td><input type="checkbox" id="tripPaid_5"></td></tr><tr><td><input type="checkbox" id="playPaid_6" checked=""></td><td>Sue O'Rourke</td><td><input class="score-input" type="number" step="0.5" id="req_6" value="11.5"></td><td><input class="score-input" type="number" step="0.5" id="score_6" oninput="updateNet(6)"></td><td id="net_6">-</td><td><input type="checkbox" id="tripPaid_6"></td></tr><tr><td><input type="checkbox" id="playPaid_7" checked=""></td><td>Cynthia Cottrill</td><td><input class="score-input" type="number" step="0.5" id="req_7" value="27.5"></td><td><input class="score-input" type="number" step="0.5" id="score_7" oninput="updateNet(7)"></td><td id="net_7">-</td><td><input type="checkbox" id="tripPaid_7"></td></tr><tr><td><input type="checkbox" id="playPaid_8" checked=""></td><td>Hannah Campbell</td><td><input class="score-input" type="number" step="0.5" id="req_8" value="2.5"></td><td><input class="score-input" type="number" step="0.5" id="score_8" oninput="updateNet(8)"></td><td id="net_8">-</td><td><input type="checkbox" id="tripPaid_8"></td></tr><tr><td><input type="checkbox" id="playPaid_9" checked=""></td><td>Candy Crim</td><td><input class="score-input" type="number" step="0.5" id="req_9" value="11"></td><td><input class="score-input" type="number" step="0.5" id="score_9" oninput="updateNet(9)"></td><td id="net_9">-</td><td><input type="checkbox" id="tripPaid_9"></td></tr><tr><td><input type="checkbox" id="playPaid_10" checked=""></td><td>Caroline Taylor</td><td><input class="score-input" type="number" step="0.5" id="req_10" value="10"></td><td><input class="score-input" type="number" step="0.5" id="score_10" oninput="updateNet(10)"></td><td id="net_10">-</td><td><input type="checkbox" id="tripPaid_10"></td></tr><tr><td><input type="checkbox" id="playPaid_11" checked=""></td><td>Rebekah Wills</td><td><input class="score-input" type="number" step="0.5" id="req_11" value="6.5"></td><td><input class="score-input" type="number" step="0.5" id="score_11" oninput="updateNet(11)"></td><td id="net_11">-</td><td><input type="checkbox" id="tripPaid_11"></td></tr><tr><td><input type="checkbox" id="playPaid_12" checked=""></td><td>Jane Beckwith</td><td><input class="score-input" type="number" step="0.5" id="req_12" value="0"></td><td><input class="score-input" type="number" step="0.5" id="score_12" oninput="updateNet(12)"></td><td id="net_12">-</td><td><input type="checkbox" id="tripPaid_12"></td></tr><tr><td><input type="checkbox" id="playPaid_13" checked=""></td><td>Shannon Bertram</td><td><input class="score-input" type="number" step="0.5" id="req_13" value="7"></td><td><input class="score-input" type="number" step="0.5" id="score_13" oninput="updateNet(13)"></td><td id="net_13">-</td><td><input type="checkbox" id="tripPaid_13"></td></tr><tr><td><input type="checkbox" id="playPaid_14" checked=""></td><td>Jennifer Dean</td><td><input class="score-input" type="number" step="0.5" id="req_14" value="0"></td><td><input class="score-input" type="number" step="0.5" id="score_14" oninput="updateNet(14)"></td><td id="net_14">-</td><td><input type="checkbox" id="tripPaid_14"></td></tr><tr><td><input type="checkbox" id="playPaid_15" checked=""></td><td>Betty Glarner</td><td><input class="score-input" type="number" step="0.5" id="req_15" value="14"></td><td><input class="score-input" type="number" step="0.5" id="score_15" oninput="updateNet(15)"></td><td id="net_15">-</td><td><input type="checkbox" id="tripPaid_15"></td></tr><tr><td><input type="checkbox" id="playPaid_16" checked=""></td><td>Tammy Howard</td><td><input class="score-input" type="number" step="0.5" id="req_16" value="0"></td><td><input class="score-input" type="number" step="0.5" id="score_16" oninput="updateNet(16)"></td><td id="net_16">-</td><td><input type="checkbox" id="tripPaid_16"></td></tr><tr><td><input type="checkbox" id="playPaid_17" checked=""></td><td>Becky Lucas</td><td><input class="score-input" type="number" step="0.5" id="req_17" value="3.5"></td><td><input class="score-input" type="number" step="0.5" id="score_17" oninput="updateNet(17)"></td><td id="net_17">-</td><td><input type="checkbox" id="tripPaid_17"></td></tr><tr><td><input type="checkbox" id="playPaid_18" checked=""></td><td>Andria McHargue</td><td><input class="score-input" type="number" step="0.5" id="req_18" value="3"></td><td><input class="score-input" type="number" step="0.5" id="score_18" oninput="updateNet(18)"></td><td id="net_18">-</td><td><input type="checkbox" id="tripPaid_18"></td></tr><tr><td><input type="checkbox" id="playPaid_19" checked=""></td><td>Terrie Springer</td><td><input class="score-input" type="number" step="0.5" id="req_19" value="4.5"></td><td><input class="score-input" type="number" step="0.5" id="score_19" oninput="updateNet(19)"></td><td id="net_19">-</td><td><input type="checkbox" id="tripPaid_19"></td></tr><tr><td><input type="checkbox" id="playPaid_20" checked=""></td><td>Shiela Tubbs</td><td><input class="score-input" type="number" step="0.5" id="req_20" value="6"></td><td><input class="score-input" type="number" step="0.5" id="score_20" oninput="updateNet(20)"></td><td id="net_20">-</td><td><input type="checkbox" id="tripPaid_20"></td></tr><tr><td><input type="checkbox" id="playPaid_21" checked=""></td><td>Tania Bobe</td><td><input class="score-input" type="number" step="0.5" id="req_21" value="3"></td><td><input class="score-input" type="number" step="0.5" id="score_21" oninput="updateNet(21)"></td><td id="net_21">-</td><td><input type="checkbox" id="tripPaid_21"></td></tr></tbody></table></div>
+    <div class="controls-row no-print">
+      <button onclick="calculateRoundPreview()">Preview Payouts</button>
+      <button onclick="saveRound()">Save Round</button><button class="secondary" onclick="cancelEditRound()">Cancel Edit</button>
+      <button class="secondary" onclick="window.print()">Print Weekly Report</button>
+    </div>
+    <div id="roundPreview"></div>
+  </div>
+</div>
+
+<div id="leaderboardTab" class="hidden">
+  <div class="section">
+    <h2>Season Leaderboard</h2>
+    <table><thead><tr><th>#</th><th>Player</th><th>Total Won</th><th>Pts Req</th><th>Rounds</th><th>Paid to Play</th><th>Trip Paid</th></tr></thead><tbody id="leaderboardBody"><tr><td>1</td><td>Tami Divietro</td><td>$84.00</td><td>16</td><td>9</td><td>$5.00</td><td>$55.00</td></tr><tr><td>2</td><td>Dara Taylor</td><td>$65.00</td><td>17.5</td><td>8</td><td>$5.00</td><td>$45.00</td></tr><tr><td>3</td><td>Helen Norman</td><td>$49.00</td><td>10.5</td><td>9</td><td>$5.00</td><td>$55.00</td></tr><tr><td>4</td><td>Michele Lang</td><td>$33.00</td><td>10</td><td>9</td><td>$5.00</td><td>$55.00</td></tr><tr><td>5</td><td>Mary McCormick</td><td>$31.00</td><td>12</td><td>8</td><td>$5.00</td><td>$45.00</td></tr><tr><td>6</td><td>Julie Parker</td><td>$29.50</td><td>7.5</td><td>8</td><td>$5.00</td><td>$45.00</td></tr><tr><td>7</td><td>Cynthia Cottrill</td><td>$11.00</td><td>27.5</td><td>1</td><td>$0.00</td><td>$5.00</td></tr><tr><td>8</td><td>Sue O'Rourke</td><td>$11.00</td><td>11.5</td><td>1</td><td>$0.00</td><td>$5.00</td></tr><tr><td>9</td><td>Hannah Campbell</td><td>$10.00</td><td>2.5</td><td>1</td><td>$0.00</td><td>$5.00</td></tr><tr><td>10</td><td>Candy Crim</td><td>$9.00</td><td>11</td><td>8</td><td>$5.00</td><td>$50.00</td></tr><tr><td>11</td><td>Caroline Taylor</td><td>$9.00</td><td>10</td><td>2</td><td>$0.00</td><td>$10.00</td></tr><tr><td>12</td><td>Rebekah Wills</td><td>$7.50</td><td>6.5</td><td>8</td><td>$5.00</td><td>$50.00</td></tr><tr><td>13</td><td>Betty Glarner</td><td>$0.00</td><td>14</td><td>1</td><td>$0.00</td><td>$5.00</td></tr><tr><td>14</td><td>Shannon Bertram</td><td>$0.00</td><td>7</td><td>5</td><td>$0.00</td><td>$30.00</td></tr><tr><td>15</td><td>Shiela Tubbs</td><td>$0.00</td><td>6</td><td>7</td><td>$0.00</td><td>$45.00</td></tr><tr><td>16</td><td>Terrie Springer</td><td>$0.00</td><td>4.5</td><td>8</td><td>$5.00</td><td>$45.00</td></tr><tr><td>17</td><td>Becky Lucas</td><td>$0.00</td><td>3.5</td><td>4</td><td>$0.00</td><td>$10.00</td></tr><tr><td>18</td><td>Andria McHargue</td><td>$0.00</td><td>3</td><td>3</td><td>$0.00</td><td>$15.00</td></tr><tr><td>19</td><td>Tania Bobe</td><td>$0.00</td><td>3</td><td>4</td><td>$5.00</td><td>$30.00</td></tr><tr><td>20</td><td>Jane Beckwith</td><td>$0.00</td><td>0</td><td>0</td><td>$0.00</td><td>$0.00</td></tr><tr><td>21</td><td>Jennifer Dean</td><td>$0.00</td><td>0</td><td>2</td><td>$0.00</td><td>$25.00</td></tr><tr><td>22</td><td>Tammy Howard</td><td>$0.00</td><td>0</td><td>0</td><td>$0.00</td><td>$0.00</td></tr></tbody></table>
+    <div class="controls-row no-print"><button onclick="recalculateAllPointsRequired()">Recalculate All Points Required</button></div>
+    <h3>Player Reference — Points Required &amp; Last 8</h3>
+    <div id="playerReferenceBody"><div class="card"><strong>Andria McHargue</strong><br>Pts Req: <strong>3</strong> · Total $0.00 · 3 rds · Trip $15.00<br><span class="pill">4.5</span><span class="pill">5.5</span><span class="pill">0</span></div><div class="card"><strong>Becky Lucas</strong><br>Pts Req: <strong>3.5</strong> · Total $0.00 · 4 rds · Trip $10.00<br><span class="pill">4.5</span><span class="pill">1.5</span><span class="pill">5</span><span class="pill">3</span></div><div class="card"><strong>Betty Glarner</strong><br>Pts Req: <strong>14</strong> · Total $0.00 · 1 rds · Trip $5.00<br><span class="pill">14</span></div><div class="card"><strong>Candy Crim</strong><br>Pts Req: <strong>11</strong> · Total $9.00 · 8 rds · Trip $50.00<br><span class="pill">10.5</span><span class="pill">7.5</span><span class="pill">11.5</span><span class="pill">11.5</span><span class="pill">10.5</span><span class="pill">11</span><span class="pill">6.5</span><span class="pill">11.5</span></div><div class="card"><strong>Caroline Taylor</strong><br>Pts Req: <strong>10</strong> · Total $9.00 · 2 rds · Trip $10.00<br><span class="pill">9</span><span class="pill">11</span></div><div class="card"><strong>Cynthia Cottrill</strong><br>Pts Req: <strong>27.5</strong> · Total $11.00 · 1 rds · Trip $5.00<br><span class="pill">27.5</span></div><div class="card"><strong>Dara Taylor</strong><br>Pts Req: <strong>17.5</strong> · Total $65.00 · 8 rds · Trip $45.00<br><span class="pill">16.5</span><span class="pill">18.5</span><span class="pill">18</span><span class="pill">14.5</span><span class="pill">17</span><span class="pill">15</span><span class="pill">19</span><span class="pill">16</span></div><div class="card"><strong>Hannah Campbell</strong><br>Pts Req: <strong>2.5</strong> · Total $10.00 · 1 rds · Trip $5.00<br><span class="pill">2.5</span></div><div class="card"><strong>Helen Norman</strong><br>Pts Req: <strong>10.5</strong> · Total $49.00 · 9 rds · Trip $55.00<br><span class="pill">8</span><span class="pill">7</span><span class="pill">3.5</span><span class="pill">11</span><span class="pill">6</span><span class="pill">12.5</span><span class="pill">11.5</span><span class="pill">11</span></div><div class="card"><strong>Jane Beckwith</strong><br>Pts Req: <strong>0</strong> · Total $0.00 · 0 rds · Trip $0.00<br><span class="note">No scores yet</span></div><div class="card"><strong>Jennifer Dean</strong><br>Pts Req: <strong>0</strong> · Total $0.00 · 2 rds · Trip $25.00<br><span class="pill">0</span><span class="pill">0</span></div><div class="card"><strong>Julie Parker</strong><br>Pts Req: <strong>7.5</strong> · Total $29.50 · 8 rds · Trip $45.00<br><span class="pill">6.5</span><span class="pill">6.5</span><span class="pill">5</span><span class="pill">5</span><span class="pill">7.5</span><span class="pill">5</span><span class="pill">11</span><span class="pill">8</span></div><div class="card"><strong>Mary McCormick</strong><br>Pts Req: <strong>12</strong> · Total $31.00 · 8 rds · Trip $45.00<br><span class="pill">12</span><span class="pill">13.5</span><span class="pill">12</span><span class="pill">11</span><span class="pill">10.5</span><span class="pill">10</span><span class="pill">11</span><span class="pill">13</span></div><div class="card"><strong>Michele Lang</strong><br>Pts Req: <strong>10</strong> · Total $33.00 · 9 rds · Trip $55.00<br><span class="pill">10</span><span class="pill">8</span><span class="pill">6</span><span class="pill">12</span><span class="pill">8</span><span class="pill">8</span><span class="pill">10</span><span class="pill">11.5</span></div><div class="card"><strong>Rebekah Wills</strong><br>Pts Req: <strong>6.5</strong> · Total $7.50 · 8 rds · Trip $50.00<br><span class="pill">3.5</span><span class="pill">6.5</span><span class="pill">3</span><span class="pill">8.5</span><span class="pill">5.5</span><span class="pill">5.5</span><span class="pill">4.5</span><span class="pill">6.5</span></div><div class="card"><strong>Shannon Bertram</strong><br>Pts Req: <strong>7</strong> · Total $0.00 · 5 rds · Trip $30.00<br><span class="pill">9.5</span><span class="pill">7.5</span><span class="pill">5</span><span class="pill">7</span><span class="pill">8</span></div><div class="card"><strong>Shiela Tubbs</strong><br>Pts Req: <strong>6</strong> · Total $0.00 · 7 rds · Trip $45.00<br><span class="pill">6</span><span class="pill">5</span><span class="pill">2.5</span><span class="pill">7.5</span><span class="pill">5.5</span><span class="pill">6.5</span><span class="pill">5.5</span></div><div class="card"><strong>Sue O'Rourke</strong><br>Pts Req: <strong>11.5</strong> · Total $11.00 · 1 rds · Trip $5.00<br><span class="pill">11.5</span></div><div class="card"><strong>Tami Divietro</strong><br>Pts Req: <strong>16</strong> · Total $84.00 · 9 rds · Trip $55.00<br><span class="pill">11</span><span class="pill">18.5</span><span class="pill">12</span><span class="pill">14</span><span class="pill">10</span><span class="pill">15.5</span><span class="pill">14.5</span><span class="pill">19</span></div><div class="card"><strong>Tammy Howard</strong><br>Pts Req: <strong>0</strong> · Total $0.00 · 0 rds · Trip $0.00<br><span class="note">No scores yet</span></div><div class="card"><strong>Tania Bobe</strong><br>Pts Req: <strong>3</strong> · Total $0.00 · 4 rds · Trip $30.00<br><span class="pill">3</span><span class="pill">3</span><span class="pill">3</span><span class="pill">3.5</span></div><div class="card"><strong>Terrie Springer</strong><br>Pts Req: <strong>4.5</strong> · Total $0.00 · 8 rds · Trip $45.00<br><span class="pill">3</span><span class="pill">6</span><span class="pill">2.5</span><span class="pill">4.5</span><span class="pill">4</span><span class="pill">4.5</span><span class="pill">3.5</span><span class="pill">4.5</span></div></div>
+    <h3>Manage Points Required</h3>
+    <p class="note">All players are locked by default. Locked players auto-calculate from the best 5 of the last 8 scores, rounded down to the nearest .5. Uncheck a player only if you need to manually adjust that player.</p>
+    <div class="controls-row no-print"><button onclick="selectAllPointLocks()">Select All Locks</button><button class="secondary" onclick="clearAllPointLocks()">Clear All Locks</button></div>
+    <div id="pointsLockBody"><table><thead><tr><th>Player</th><th>Points Required</th><th>Auto-Calc Locked?</th></tr></thead><tbody><tr><td>Andria McHargue</td><td><input class="score-input" type="number" step="0.5" id="lockPts_0" data-name="Andria McHargue" value="3"></td><td><input type="checkbox" id="lockCheck_0" checked=""></td></tr><tr><td>Becky Lucas</td><td><input class="score-input" type="number" step="0.5" id="lockPts_1" data-name="Becky Lucas" value="3.5"></td><td><input type="checkbox" id="lockCheck_1" checked=""></td></tr><tr><td>Betty Glarner</td><td><input class="score-input" type="number" step="0.5" id="lockPts_2" data-name="Betty Glarner" value="14"></td><td><input type="checkbox" id="lockCheck_2" checked=""></td></tr><tr><td>Candy Crim</td><td><input class="score-input" type="number" step="0.5" id="lockPts_3" data-name="Candy Crim" value="11"></td><td><input type="checkbox" id="lockCheck_3" checked=""></td></tr><tr><td>Caroline Taylor</td><td><input class="score-input" type="number" step="0.5" id="lockPts_4" data-name="Caroline Taylor" value="10"></td><td><input type="checkbox" id="lockCheck_4" checked=""></td></tr><tr><td>Cynthia Cottrill</td><td><input class="score-input" type="number" step="0.5" id="lockPts_5" data-name="Cynthia Cottrill" value="27.5"></td><td><input type="checkbox" id="lockCheck_5" checked=""></td></tr><tr><td>Dara Taylor</td><td><input class="score-input" type="number" step="0.5" id="lockPts_6" data-name="Dara Taylor" value="17.5"></td><td><input type="checkbox" id="lockCheck_6" checked=""></td></tr><tr><td>Hannah Campbell</td><td><input class="score-input" type="number" step="0.5" id="lockPts_7" data-name="Hannah Campbell" value="2.5"></td><td><input type="checkbox" id="lockCheck_7" checked=""></td></tr><tr><td>Helen Norman</td><td><input class="score-input" type="number" step="0.5" id="lockPts_8" data-name="Helen Norman" value="10.5"></td><td><input type="checkbox" id="lockCheck_8" checked=""></td></tr><tr><td>Jane Beckwith</td><td><input class="score-input" type="number" step="0.5" id="lockPts_9" data-name="Jane Beckwith" value="0"></td><td><input type="checkbox" id="lockCheck_9" checked=""></td></tr><tr><td>Jennifer Dean</td><td><input class="score-input" type="number" step="0.5" id="lockPts_10" data-name="Jennifer Dean" value="0"></td><td><input type="checkbox" id="lockCheck_10" checked=""></td></tr><tr><td>Julie Parker</td><td><input class="score-input" type="number" step="0.5" id="lockPts_11" data-name="Julie Parker" value="7.5"></td><td><input type="checkbox" id="lockCheck_11" checked=""></td></tr><tr><td>Mary McCormick</td><td><input class="score-input" type="number" step="0.5" id="lockPts_12" data-name="Mary McCormick" value="12"></td><td><input type="checkbox" id="lockCheck_12" checked=""></td></tr><tr><td>Michele Lang</td><td><input class="score-input" type="number" step="0.5" id="lockPts_13" data-name="Michele Lang" value="10"></td><td><input type="checkbox" id="lockCheck_13" checked=""></td></tr><tr><td>Rebekah Wills</td><td><input class="score-input" type="number" step="0.5" id="lockPts_14" data-name="Rebekah Wills" value="6.5"></td><td><input type="checkbox" id="lockCheck_14" checked=""></td></tr><tr><td>Shannon Bertram</td><td><input class="score-input" type="number" step="0.5" id="lockPts_15" data-name="Shannon Bertram" value="7"></td><td><input type="checkbox" id="lockCheck_15" checked=""></td></tr><tr><td>Shiela Tubbs</td><td><input class="score-input" type="number" step="0.5" id="lockPts_16" data-name="Shiela Tubbs" value="6"></td><td><input type="checkbox" id="lockCheck_16" checked=""></td></tr><tr><td>Sue O'Rourke</td><td><input class="score-input" type="number" step="0.5" id="lockPts_17" data-name="Sue O&#39;Rourke" value="11.5"></td><td><input type="checkbox" id="lockCheck_17" checked=""></td></tr><tr><td>Tami Divietro</td><td><input class="score-input" type="number" step="0.5" id="lockPts_18" data-name="Tami Divietro" value="16"></td><td><input type="checkbox" id="lockCheck_18" checked=""></td></tr><tr><td>Tammy Howard</td><td><input class="score-input" type="number" step="0.5" id="lockPts_19" data-name="Tammy Howard" value="0"></td><td><input type="checkbox" id="lockCheck_19" checked=""></td></tr><tr><td>Tania Bobe</td><td><input class="score-input" type="number" step="0.5" id="lockPts_20" data-name="Tania Bobe" value="3"></td><td><input type="checkbox" id="lockCheck_20" checked=""></td></tr><tr><td>Terrie Springer</td><td><input class="score-input" type="number" step="0.5" id="lockPts_21" data-name="Terrie Springer" value="4.5"></td><td><input type="checkbox" id="lockCheck_21" checked=""></td></tr></tbody></table></div>
+    <button onclick="savePointsLocks()">Save Points Required / Locks</button><button class="secondary" onclick="recalculateLockedPoints()">Recalculate Locked Points Now</button>
+    <h3>Fund Balances</h3>
+    <div class="controls-row"><label>Hole-in-One Fund: <input class="money-input" type="number" step="0.5" id="holeInOneFund" value="100"></label></div>
+    <div id="fundBalancesBody"><div class="controls-row"><div class="fund-card"><div>TRIP FUND</div><div class="amount">$630.00</div></div><div class="fund-card"><div>PAID TO PLAY</div><div class="amount">$50.00</div></div><div class="fund-card"><div>TOTAL WON</div><div class="amount">$349.00</div></div><div class="fund-card"><div>CTP CARRYOVER</div><div class="amount">$12.00</div></div><div class="fund-card"><div>HOLE-IN-ONE</div><div class="amount">$100.00</div></div></div></div>
+  </div>
+</div>
+
+<div id="tripTab" class="hidden">
+  <div class="section">
+    <h2>Trip Fund</h2>
+    <p class="note">Record extra $5 trip payments even when someone does not play.</p>
+    <div class="controls-row">
+      <input id="tripNote" placeholder="Note/date optional">
+      <button onclick="saveTripOnlyPayments()">Save Trip Payments</button>
+      <button class="danger" onclick="clearTripOnly()">Clear Trip Fund Entries</button>
+    </div>
+    <div id="tripPaymentsBody"><table><thead><tr><th>Paid?</th><th>Golfer</th><th>Amount</th></tr></thead><tbody><tr><td><input type="checkbox" id="tripOnly_0"></td><td>Tami Divietro</td><td><input class="money-input" type="number" id="tripOnlyAmt_0" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_1"></td><td>Dara Taylor</td><td><input class="money-input" type="number" id="tripOnlyAmt_1" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_2"></td><td>Helen Norman</td><td><input class="money-input" type="number" id="tripOnlyAmt_2" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_3"></td><td>Mary McCormick</td><td><input class="money-input" type="number" id="tripOnlyAmt_3" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_4"></td><td>Michele Lang</td><td><input class="money-input" type="number" id="tripOnlyAmt_4" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_5"></td><td>Julie Parker</td><td><input class="money-input" type="number" id="tripOnlyAmt_5" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_6"></td><td>Sue O'Rourke</td><td><input class="money-input" type="number" id="tripOnlyAmt_6" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_7"></td><td>Cynthia Cottrill</td><td><input class="money-input" type="number" id="tripOnlyAmt_7" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_8"></td><td>Hannah Campbell</td><td><input class="money-input" type="number" id="tripOnlyAmt_8" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_9"></td><td>Candy Crim</td><td><input class="money-input" type="number" id="tripOnlyAmt_9" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_10"></td><td>Caroline Taylor</td><td><input class="money-input" type="number" id="tripOnlyAmt_10" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_11"></td><td>Rebekah Wills</td><td><input class="money-input" type="number" id="tripOnlyAmt_11" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_12"></td><td>Jane Beckwith</td><td><input class="money-input" type="number" id="tripOnlyAmt_12" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_13"></td><td>Shannon Bertram</td><td><input class="money-input" type="number" id="tripOnlyAmt_13" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_14"></td><td>Jennifer Dean</td><td><input class="money-input" type="number" id="tripOnlyAmt_14" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_15"></td><td>Betty Glarner</td><td><input class="money-input" type="number" id="tripOnlyAmt_15" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_16"></td><td>Tammy Howard</td><td><input class="money-input" type="number" id="tripOnlyAmt_16" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_17"></td><td>Becky Lucas</td><td><input class="money-input" type="number" id="tripOnlyAmt_17" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_18"></td><td>Andria McHargue</td><td><input class="money-input" type="number" id="tripOnlyAmt_18" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_19"></td><td>Terrie Springer</td><td><input class="money-input" type="number" id="tripOnlyAmt_19" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_20"></td><td>Shiela Tubbs</td><td><input class="money-input" type="number" id="tripOnlyAmt_20" value="5"></td></tr><tr><td><input type="checkbox" id="tripOnly_21"></td><td>Tania Bobe</td><td><input class="money-input" type="number" id="tripOnlyAmt_21" value="5"></td></tr></tbody></table></div>
+    <h3>Trip Fund Summary</h3>
+    <table><thead><tr><th>Golfer</th><th>Payments</th><th>Total Paid</th></tr></thead><tbody id="tripSummaryBody"><tr><td>Helen Norman</td><td>11</td><td>$55.00</td></tr><tr><td>Michele Lang</td><td>11</td><td>$55.00</td></tr><tr><td>Tami Divietro</td><td>11</td><td>$55.00</td></tr><tr><td>Candy Crim</td><td>10</td><td>$50.00</td></tr><tr><td>Rebekah Wills</td><td>10</td><td>$50.00</td></tr><tr><td>Dara Taylor</td><td>9</td><td>$45.00</td></tr><tr><td>Julie Parker</td><td>9</td><td>$45.00</td></tr><tr><td>Mary McCormick</td><td>9</td><td>$45.00</td></tr><tr><td>Shiela Tubbs</td><td>9</td><td>$45.00</td></tr><tr><td>Terrie Springer</td><td>9</td><td>$45.00</td></tr><tr><td>Shannon Bertram</td><td>6</td><td>$30.00</td></tr><tr><td>Tania Bobe</td><td>6</td><td>$30.00</td></tr><tr><td>Jennifer Dean</td><td>5</td><td>$25.00</td></tr><tr><td>Andria McHargue</td><td>3</td><td>$15.00</td></tr><tr><td>Becky Lucas</td><td>2</td><td>$10.00</td></tr><tr><td>Caroline Taylor</td><td>2</td><td>$10.00</td></tr><tr><td>Betty Glarner</td><td>1</td><td>$5.00</td></tr><tr><td>Cynthia Cottrill</td><td>1</td><td>$5.00</td></tr><tr><td>Hannah Campbell</td><td>1</td><td>$5.00</td></tr><tr><td>Sue O'Rourke</td><td>1</td><td>$5.00</td></tr><tr><td>Jane Beckwith</td><td>0</td><td>$0.00</td></tr><tr><td>Tammy Howard</td><td>0</td><td>$0.00</td></tr></tbody></table>
+    <p id="tripTotalText" class="note">Current trip fund total: $630.00</p>
+  </div>
+</div>
+
+<div id="reportsTab" class="hidden">
+  <div class="section">
+    <h2>Saved Round Reports</h2>
+    <div id="reportsBody"><div class="card"><h3>2026-06-14 · 10 players</h3><button class="secondary no-print" onclick="loadRoundForEditing(0)">Edit This Week</button><button class="danger no-print" onclick="deleteRound(0)">Delete This Week</button><p>Points Fund $30.00 · Front CTP H6: Pot $12.00, Paid $0.00 to Julie Parker · Back CTP H15: Pot $12.00, Paid $0.00 rollover</p><table><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Pts Req</th><th>Net</th><th>Points $</th><th>CTP/HIO</th><th>Total Won</th><th>Trip Today</th></tr></thead><tbody><tr><td>1</td><td>Tami Divietro (1st)</td><td>19</td><td>15.0</td><td>+4.0</td><td>$17.00</td><td>$0.00</td><td>$17.00</td><td>$5.00</td></tr><tr><td>2</td><td>Michele Lang (2nd)</td><td>11.5</td><td>9.5</td><td>+2.0</td><td>$12.00</td><td>$0.00</td><td>$12.00</td><td>$5.00</td></tr><tr><td>3</td><td>Julie Parker (4th)</td><td>8</td><td>7.5</td><td>+0.5</td><td>$0.00</td><td>$12.00</td><td>$12.00</td><td>$5.00</td></tr><tr><td>4</td><td>Mary McCormick (3rd)</td><td>13</td><td>12.0</td><td>+1.0</td><td>$7.00</td><td>$0.00</td><td>$7.00</td><td>$5.00</td></tr><tr><td>5</td><td>Candy Crim (4th)</td><td>11.5</td><td>11.0</td><td>+0.5</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>6</td><td>Rebekah Wills (4th)</td><td>6.5</td><td>6.0</td><td>+0.5</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>7</td><td>Tania Bobe (4th)</td><td>3.5</td><td>3.0</td><td>+0.5</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>8</td><td>Helen Norman (8th)</td><td>11</td><td>11.0</td><td>+0.0</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>9</td><td>Terrie Springer (8th)</td><td>4.5</td><td>4.5</td><td>+0.0</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>10</td><td>Andria McHargue (8th)</td><td>0</td><td>0.0</td><td>+0.0</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr><tr><td>11</td><td>Jennifer Dean (8th)</td><td>0</td><td>0.0</td><td>+0.0</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr><tr><td>12</td><td>Dara Taylor (12th)</td><td>16</td><td>18.0</td><td>-2.0</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$5.00</td></tr></tbody></table></div></div>
+  </div>
+</div>
+</div>
+
+<script>
+const seededPlayers = [
+{name:"Tami Divietro", totalWon:67, ptsReq:15.0, rounds:9, tripPaid:50, lockedPts:true, scores:[12.5,11,18.5,12,14,10,15.5,14.5]},
+{name:"Dara Taylor", totalWon:65, ptsReq:18.0, rounds:7, tripPaid:40, lockedPts:true, scores:[16.5,18.5,18,14.5,17,15,19]},
+{name:"Helen Norman", totalWon:49, ptsReq:11.0, rounds:9, tripPaid:50, lockedPts:true, scores:[11,8,7,3.5,11,6,12.5,11.5]},
+{name:"Mary McCormick", totalWon:24, ptsReq:12.0, rounds:7, tripPaid:40, lockedPts:true, scores:[12,13.5,12,11,10.5,10,11]},
+{name:"Michele Lang", totalWon:21, ptsReq:9.5, rounds:9, tripPaid:50, lockedPts:true, scores:[6.5,10,8,6,12,8,8,10]},
+{name:"Julie Parker", totalWon:17.5, ptsReq:7.5, rounds:7, tripPaid:40, lockedPts:true, scores:[6.5,6.5,5,5,7.5,5,11]},
+{name:"Sue O'Rourke", totalWon:11, ptsReq:11.5, rounds:1, tripPaid:5, lockedPts:true, scores:[11.5]},
+{name:"Cynthia Cottrill", totalWon:11, ptsReq:27.5, rounds:1, tripPaid:5, lockedPts:true, scores:[27.5]},
+{name:"Hannah Campbell", totalWon:10, ptsReq:2.5, rounds:1, tripPaid:5, lockedPts:true, scores:[2.5]},
+{name:"Candy Crim", totalWon:9, ptsReq:11.0, rounds:7, tripPaid:45, lockedPts:true, scores:[10.5,7.5,11.5,11.5,10.5,11,6.5]},
+{name:"Caroline Taylor", totalWon:9, ptsReq:10.0, rounds:2, tripPaid:10, lockedPts:true, scores:[9,11]},
+{name:"Rebekah Wills", totalWon:7.5, ptsReq:6.0, rounds:7, tripPaid:45, lockedPts:true, scores:[3.5,6.5,3,8.5,5.5,5.5,4.5]},
+{name:"Jane Beckwith", totalWon:0, ptsReq:0, rounds:0, tripPaid:0, lockedPts:true, scores:[]},
+{name:"Shannon Bertram", totalWon:0, ptsReq:7.5, rounds:5, tripPaid:25, lockedPts:true, scores:[9.5,7.5,5,7,8]},
+{name:"Jennifer Dean", totalWon:0, ptsReq:0, rounds:1, tripPaid:20, lockedPts:true, scores:[0]},
+{name:"Betty Glarner", totalWon:0, ptsReq:14.0, rounds:1, tripPaid:5, lockedPts:true, scores:[14]},
+{name:"Tammy Howard", totalWon:0, ptsReq:0, rounds:0, tripPaid:0, lockedPts:true, scores:[]},
+{name:"Becky Lucas", totalWon:0, ptsReq:3.5, rounds:4, tripPaid:10, lockedPts:true, scores:[4.5,1.5,5,3]},
+{name:"Andria McHargue", totalWon:0, ptsReq:4.5, rounds:2, tripPaid:15, lockedPts:true, scores:[4.5,5.5]},
+{name:"Terrie Springer", totalWon:0, ptsReq:4.5, rounds:7, tripPaid:40, lockedPts:true, scores:[3,6,2.5,4.5,4,4.5,3.5]},
+{name:"Shiela Tubbs", totalWon:0, ptsReq:6.0, rounds:7, tripPaid:40, lockedPts:true, scores:[6,5,2.5,7.5,5.5,6.5,5.5]},
+{name:"Tania Bobe", totalWon:0, ptsReq:3.0, rounds:3, tripPaid:25, lockedPts:true, scores:[3,3,3]}
+];
+const purseTable={3:[9],4:[12],5:[10,5],6:[12,6],7:[13,8],8:[15,9],9:[15,9,3],10:[15,10,5],11:[16,11,6],12:[17,12,7],13:[17,12,7,3],14:[18,12,7,5],15:[19,13,8,5],16:[20,13,9,6],17:[20,13,9,6,3],18:[20,15,9,6,4],19:[20,15,10,7,5],20:[20,15,10,8,7]};
+const defaultTeams=[["Tami Divietro","Candy Crim"],["Julie Parker","Shiela Tubbs"],["Rebekah Wills","Shannon Bertram"],["Dara Taylor","Caroline Taylor"]];
+
+const STORAGE_KEY = "ladies_golf_tracker_current";
+
+const LEGACY_KEYS = [
+  "ladies_league_tracker_v5",
+  "ladies_league_tracker_v6",
+  "ladies_league_tracker_v7",
+  "ladies_league_tracker_v8",
+  "ladies_golf_tracker_current"
+];
+
+function freshApp(){
+  return {
+    players: seededPlayers.map(p => ({
+      ...p,
+      lockedPts: p.lockedPts !== undefined ? p.lockedPts : true,
+      seedScores: [...(p.scores || [])],
+      totalWonSeed: Number(p.totalWon || 0),
+      paidToPlaySeed: Number(p.paidToPlay || 0),
+      tripPaidSeed: Number(p.tripPaid || 0)
+    })),
+    golfers: seededPlayers.map(p=>p.name),
+    selected: seededPlayers.map(p=>p.name),
+    currentWeekPlayers: seededPlayers.map(p=>p.name),
+    teams: defaultTeams,
+    rounds: [],
+    pairingHistory: [],
+    tripEntries: [],
+    ctpCarryFront: 0,
+    ctpCarryBack: 0,
+    holeInOneFund: 100,
+    currentRoundDate: new Date().toISOString().slice(0,10)
+  };
+}
+
+function scoreStoredApp(candidate){
+  if(!candidate) return -1;
+  const rounds = Array.isArray(candidate.rounds) ? candidate.rounds.length : 0;
+  const pairings = Array.isArray(candidate.pairingHistory) ? candidate.pairingHistory.length : 0;
+  const trips = Array.isArray(candidate.tripEntries) ? candidate.tripEntries.length : 0;
+  const players = Array.isArray(candidate.players) ? candidate.players.length : 0;
+  return rounds * 1000 + pairings * 100 + trips * 10 + players;
+}
+
+function loadBestSavedApp(){
+  let best = null;
+  let bestScore = -1;
+
+  LEGACY_KEYS.forEach(keyName => {
+    try{
+      const raw = localStorage.getItem(keyName);
+      if(!raw) return;
+      const parsed = JSON.parse(raw);
+      const score = scoreStoredApp(parsed);
+      if(score > bestScore){
+        best = parsed;
+        bestScore = score;
+      }
+    }catch(e){}
+  });
+
+  return best || freshApp();
+}
+
+let app = loadBestSavedApp();
+
+function normalizeApp(){
+  if(!app.players) app.players = [];
+  if(!app.golfers) app.golfers = app.players.map(p=>p.name);
+  if(!app.selected) app.selected = [...app.golfers];
+  if(!app.currentWeekPlayers) app.currentWeekPlayers = [...app.selected];
+  if(!app.teams) app.teams = defaultTeams;
+  if(!app.rounds) app.rounds = [];
+  if(!app.pairingHistory) app.pairingHistory = [];
+  if(!app.tripEntries) app.tripEntries = [];
+  if(app.ctpCarryFront === undefined) app.ctpCarryFront = 0;
+  if(app.ctpCarryBack === undefined) app.ctpCarryBack = 0;
+  if(app.holeInOneFund === undefined) app.holeInOneFund = 100;
+  if(!app.currentRoundDate) app.currentRoundDate = new Date().toISOString().slice(0,10);
+
+  seededPlayers.forEach(seed => {
+    let p = app.players.find(x => x.name === seed.name);
+    if(!p){
+      p = {...seed};
+      app.players.push(p);
+    }
+    if(!app.golfers.includes(seed.name)) app.golfers.push(seed.name);
+
+    if(p.lockedPts === undefined) p.lockedPts = true;
+    if(!p.seedScores) p.seedScores = [...(seed.scores || [])];
+    if(p.totalWonSeed === undefined) p.totalWonSeed = Number(seed.totalWon || 0);
+    if(p.paidToPlaySeed === undefined) p.paidToPlaySeed = Number(seed.paidToPlay || 0);
+    if(p.tripPaidSeed === undefined) p.tripPaidSeed = Number(seed.tripPaid || 0);
+  });
+}
+
+normalizeApp();
+
+let latestPreview=[];
+let editingRoundIndex=null;
+function save(){
+  normalizeApp();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(app));
+}
+function money(n){return "$"+Number(n||0).toFixed(2)}
+function fmt(n){return Number(n||0).toFixed(Number(n||0)%1===0?0:1)}
+function formatPts(value){return Number(value||0)%1===0 ? Number(value||0).toFixed(0) : Number(value||0).toFixed(1)}
+function roundDownHalf(value){return Math.floor(Number(value||0)*2)/2}
+function getPlayer(name){let p=app.players.find(x=>x.name===name);if(!p){p={name,totalWon:0,ptsReq:0,rounds:0,tripPaid:0,paidToPlay:0,lockedPts:true, scores:[]};app.players.push(p);if(!app.golfers.includes(name))app.golfers.push(name)}return p}
+function recalcReq(p){
+ const last8=(p.scores||[]).slice(-8),
+       sorted=[...last8].sort((a,b)=>b-a),
+       use=sorted.slice(0,Math.min(5,sorted.length));
+ const avg=use.length?use.reduce((a,b)=>a+b,0)/use.length:0;
+
+ // Locked = auto-calculate.
+ // Unlocked = manual adjustment; keep the manually entered value.
+ if(p.lockedPts !== false){
+   p.ptsReq=roundDownHalf(avg);
+ }
+ p.rounds=(p.scores||[]).length;
+}
+function showTab(id,btn){["pairingsTab","roundTab","leaderboardTab","tripTab","reportsTab"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));btn.classList.add("active");renderAll()}
+function formatDate(s){if(!s)return"";const p=s.split("-");return p.length===3?p[1]+"/"+p[2]+"/"+p[0]:s}
+function setRoundDateFromPairings(){const d=document.getElementById("pairingRoundDate");if(d&&d.value){app.currentRoundDate=d.value;save();renderRoundDateDisplays()}}
+function renderRoundDateDisplays(){const p=document.getElementById("pairingRoundDate");if(p)p.value=app.currentRoundDate||new Date().toISOString().slice(0,10);const r=document.getElementById("roundDateDisplay");if(r)r.textContent=formatDate(app.currentRoundDate)}
+function getWeekPlayers(){return (app.currentWeekPlayers&&app.currentWeekPlayers.length?app.currentWeekPlayers:app.selected).filter((n,i,a)=>n&&a.indexOf(n)===i)}
+function renderPlayers(){const list=document.getElementById("playerList");list.innerHTML="";
+const total=document.getElementById("totalPlayersThisWeek");
+if(total){ total.textContent = "Total Players This Week: " + app.selected.length; }
+[...app.golfers].sort((a,b)=>a.localeCompare(b)).forEach(name=>{const lab=document.createElement("label");lab.className="checkline";const cb=document.createElement("input");cb.type="checkbox";cb.checked=app.selected.includes(name);cb.onchange=()=>{if(cb.checked&&!app.selected.includes(name))app.selected.push(name);else app.selected=app.selected.filter(x=>x!==name);app.currentWeekPlayers=[...app.selected];save();previewPairings();renderRoundEntry();renderTeamDropdowns()};lab.appendChild(cb);lab.append(name);list.appendChild(lab)})}
+function renderTeamDropdowns(){const a=document.getElementById("teamPlayer1"),b=document.getElementById("teamPlayer2");if(a&&b){a.innerHTML="";b.innerHTML="";app.golfers.forEach(n=>[a,b].forEach(s=>{const o=document.createElement("option");o.value=n;o.textContent=n;s.appendChild(o)}));if(app.golfers.length>1)b.selectedIndex=1}const ctpF=document.getElementById("ctpFront"),ctpB=document.getElementById("ctpBack");[ctpF,ctpB].forEach(sel=>{if(!sel)return;sel.innerHTML='<option value="">No winner / rollover</option>';getWeekPlayers().forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o)})})}
+function renderTeamSetup(){const box=document.getElementById("teamSetup");box.innerHTML="";app.teams.forEach((t,i)=>{const d=document.createElement("div");d.className="card";d.innerHTML=`Team ${i+1}: ${t.join(" & ")} <button class="danger no-print" onclick="removeTeam(${i})">Remove</button>`;box.appendChild(d)})}
+function addGolfer(){const input=document.getElementById("newGolfer"),n=input.value.trim();if(!n)return;if(!app.golfers.includes(n)){app.golfers.push(n);getPlayer(n)}if(!app.selected.includes(n))app.selected.push(n);app.currentWeekPlayers=[...app.selected];input.value="";save();renderAll()}
+function addTeam(){const a=document.getElementById("teamPlayer1").value,b=document.getElementById("teamPlayer2").value;if(a===b)return alert("Choose two different golfers.");app.teams.push([a,b]);save();renderAll()}
+function removeTeam(i){app.teams.splice(i,1);save();renderAll()} function selectAll(){app.selected=[...app.golfers];app.currentWeekPlayers=[...app.selected];save();renderAll();previewPairings()} function clearAll(){app.selected=[];app.currentWeekPlayers=[];save();renderAll();previewPairings()}
+function savePlayersThisWeek(){app.currentWeekPlayers=[...app.selected];save();renderTeamDropdowns();renderRoundEntry();document.getElementById("pairingStatus").textContent="Players for this week saved. Weekly Round will use only these players.";alert("Players for this week saved.")}
+function shuffle(arr){const c=[...arr];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]]}return c} function key(a,b){return [[...a].sort().join("/"),[...b].sort().join("/")].sort().join(" vs ")}
+function repeatScore(matches){const keys=new Set();app.pairingHistory.slice(-3).forEach(w=>w.matches.forEach(m=>keys.add(m.key)));let s=0;matches.forEach(m=>{if(keys.has(m.key))s+=100});return s}
+function buildTeams(){const playing=new Set(app.selected),used=new Set(),teams=[],singles=[];app.teams.forEach(t=>{const p=t.filter(n=>playing.has(n));if(p.length===2&&!used.has(p[0])&&!used.has(p[1])){teams.push({players:p,note:"Regular team"});used.add(p[0]);used.add(p[1])}else if(p.length===1&&!used.has(p[0])){singles.push(p[0]);used.add(p[0])}});app.selected.forEach(n=>{if(!used.has(n))singles.push(n)});const s=shuffle(singles);while(s.length>=2)teams.push({players:[s.shift(),s.shift()],note:"Adjusted team"});if(s.length)teams.push({players:[s[0]],note:"Single / needs partner"});return shuffle(teams)}
+function createMatches(){let best=[],bestS=Infinity;for(let i=0;i<1000;i++){const teams=buildTeams(),m=[];while(teams.length>=2){const a=teams.shift(),b=teams.shift();m.push({team1:a.players,team2:b.players,note:a.note+"; "+b.note,key:key(a.players,b.players)})}if(teams.length){const l=teams.shift();m.push({team1:l.players,team2:[],note:"Odd team out",key:"BYE:"+l.players.join("/")})}const sc=repeatScore(m);if(sc<bestS){bestS=sc;best=m;if(sc===0)break}}return best}
+function renderPairingsTable(matches){const b=document.getElementById("pairingsBody");b.innerHTML="";matches.forEach((m,i)=>{const r=document.createElement("tr");r.innerHTML=`<td>Match ${i+1}</td><td>${m.team1.join(" & ")}</td><td>${m.team2.join(" & ")||"-"}</td><td>${m.note}</td>`;b.appendChild(r)})}
+function previewPairings(){latestPreview=createMatches();renderPairingsTable(latestPreview);const e=document.getElementById("manualPairingEditor");if(e)e.classList.add("hidden");document.getElementById("pairingStatus").textContent=app.selected.length+" golfers selected. Avoiding repeats from the last 3 saved pairing weeks when possible."}
+function escapeHtml(str){return String(str).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+function playerDropdown(id,selectedName){const weekPlayers=getWeekPlayers();let h='<select id="'+id+'" style="width:100%"><option value=""></option>';weekPlayers.forEach(n=>h+='<option value="'+escapeHtml(n)+'" '+(n===selectedName?'selected':'')+'>'+escapeHtml(n)+'</option>');app.golfers.forEach(n=>{if(!weekPlayers.includes(n))h+='<option value="'+escapeHtml(n)+'" '+(n===selectedName?'selected':'')+'>'+escapeHtml(n)+'</option>'});return h+'</select>'}
+function showManualPairingEditor(){const editor=document.getElementById("manualPairingEditor");if(!latestPreview.length)latestPreview=createMatches();editor.classList.remove("hidden");let out='<h3>Manual Pairing Editor</h3><p class="note">Use dropdowns to change pairings. Click Apply Manual Pairings before saving.</p><table><thead><tr><th>Match</th><th>Team 1 - Player 1</th><th>Team 1 - Player 2</th><th>Team 2 - Player 1</th><th>Team 2 - Player 2</th></tr></thead><tbody>';latestPreview.forEach((m,i)=>{out+='<tr><td>Match '+(i+1)+'</td><td>'+playerDropdown("manual_t1a_"+i,m.team1[0]||"")+'</td><td>'+playerDropdown("manual_t1b_"+i,m.team1[1]||"")+'</td><td>'+playerDropdown("manual_t2a_"+i,m.team2[0]||"")+'</td><td>'+playerDropdown("manual_t2b_"+i,m.team2[1]||"")+'</td></tr>'});out+='</tbody></table><div class="controls-row"><button onclick="applyManualPairings()">Apply Manual Pairings</button><button class="secondary" onclick="addManualMatch()">Add Match</button><button class="danger" onclick="hideManualPairingEditor()">Cancel</button></div>';editor.innerHTML=out}
+function addManualMatch(){if(!latestPreview.length)latestPreview=createMatches();latestPreview.push({team1:[],team2:[],note:"Manual match",key:""});showManualPairingEditor()} function hideManualPairingEditor(){document.getElementById("manualPairingEditor").classList.add("hidden")}
+function applyManualPairings(){if(!latestPreview.length)latestPreview=createMatches();const updated=[],used=new Set(),dups=[];for(let i=0;i<latestPreview.length;i++){const vals=["manual_t1a_","manual_t1b_","manual_t2a_","manual_t2b_"].map(x=>document.getElementById(x+i)?.value||"");vals.filter(Boolean).forEach(n=>{if(used.has(n))dups.push(n);used.add(n)});const team1=vals.slice(0,2).filter(Boolean),team2=vals.slice(2,4).filter(Boolean);if(team1.length||team2.length)updated.push({team1,team2,note:"Manual pairing",key:team2.length?key(team1,team2):"BYE:"+team1.join("/")})}if(dups.length&&!confirm("These golfers appear more than once: "+[...new Set(dups)].join(", ")+". Save anyway?"))return;latestPreview=updated;const names=[];latestPreview.forEach(m=>[...m.team1,...m.team2].forEach(n=>{if(n&&!names.includes(n))names.push(n);if(n&&!app.golfers.includes(n)){app.golfers.push(n);getPlayer(n)}}));app.selected=names;app.currentWeekPlayers=names;save();renderPairingsTable(latestPreview);hideManualPairingEditor();renderRoundEntry();document.getElementById("pairingStatus").textContent="Manual pairings applied. Save Pairing Week when ready."}
+function savePairingWeek(){const matches=latestPreview.length?latestPreview:createMatches();app.currentWeekPlayers=[...app.selected];app.pairingHistory.push({date:app.currentRoundDate||new Date().toISOString().slice(0,10),players:[...app.currentWeekPlayers],matches});save();renderAll();alert("Pairings saved. Weekly Round now includes only these selected players.")}
+function renderRoundEntry(){const notice=document.getElementById("editingRoundNotice"); if(notice && editingRoundIndex===null) notice.textContent=""; const box=document.getElementById("roundEntryBody");const players=getWeekPlayers();if(!players.length){box.innerHTML='<p class="warning">No players selected. Go to Pairings and select who is playing this week.</p>';return}let out='<p class="note"><strong>Players in this weekly round:</strong> '+players.join(", ")+'</p><table><thead><tr><th>Play Paid?</th><th>Player</th><th>Pts Req</th><th>Score</th><th>Net</th><th>Trip Paid?</th></tr></thead><tbody>';players.forEach((n,i)=>{const p=getPlayer(n);out+=`<tr><td><input type="checkbox" id="playPaid_${i}" checked></td><td>${n}</td><td><input class="score-input" type="number" step="0.5" id="req_${i}" value="${formatPts(p.ptsReq)}"></td><td><input class="score-input" type="number" step="0.5" id="score_${i}" oninput="updateNet(${i})"></td><td id="net_${i}">-</td><td><input type="checkbox" id="tripPaid_${i}"></td></tr>`});box.innerHTML=out+'</tbody></table>';renderRoundDateDisplays()}
+function updateNet(i){const s=Number(document.getElementById("score_"+i).value||0),r=Number(document.getElementById("req_"+i).value||0);document.getElementById("net_"+i).textContent=(s-r).toFixed(1)}
+function collectRound(){const rows=[];getWeekPlayers().forEach((n,i)=>{const score=document.getElementById("score_"+i).value,req=Number(document.getElementById("req_"+i).value||0),paid=document.getElementById("playPaid_"+i).checked,trip=document.getElementById("tripPaid_"+i).checked;if(paid||score!==""||trip)rows.push({name:n,paid,trip,score:score===""?null:Number(score),req,net:score===""?null:Number(score)-req,pointsPay:0,ctpPay:0,totalPay:0})});return rows}
+
+function removeOneScore(p, score){
+ if(score===null || score===undefined) return;
+ const idx=(p.scores||[]).lastIndexOf(score);
+ if(idx>=0) p.scores.splice(idx,1);
+}
+
+function undoRoundFromPlayerTotals(round){
+ if(!round || !round.rows) return;
+
+ round.rows.forEach(r=>{
+   const p=getPlayer(r.name);
+
+   if(r.score!==null && r.score!==undefined){
+     removeOneScore(p, r.score);
+   }
+
+   if(r.paid){
+     p.paidToPlay=Math.max(0, Number(p.paidToPlay||0)-5);
+   }
+
+   if(r.trip){
+     p.tripPaid=Math.max(0, Number(p.tripPaid||0)-5);
+   }
+
+   p.totalWon=Math.max(0, Number(p.totalWon||0)-Number(r.totalPay||0));
+   recalcReq(p);
+ });
+
+ if(round.frontCarry!==undefined) app.ctpCarryFront = 0;
+ if(round.backCarry!==undefined) app.ctpCarryBack = 0;
+
+ // Rebuild CTP carryovers from remaining saved rounds in order.
+ app.ctpCarryFront = 0;
+ app.ctpCarryBack = 0;
+ app.rounds.forEach(rd=>{
+   if(rd === round) return;
+   app.ctpCarryFront = rd.frontCarry ?? app.ctpCarryFront;
+   app.ctpCarryBack = rd.backCarry ?? app.ctpCarryBack;
+ });
+}
+
+function applyRoundToPlayerTotals(round){
+ if(!round || !round.rows) return;
+
+ round.rows.forEach(r=>{
+   const p=getPlayer(r.name);
+
+   if(r.score!==null && r.score!==undefined){
+     p.scores.push(r.score);
+     recalcReq(p);
+   }
+
+   if(r.paid){
+     p.paidToPlay=(p.paidToPlay||0)+5;
+   }
+
+   if(r.trip){
+     p.tripPaid=(p.tripPaid||0)+5;
+   }
+
+   p.totalWon=(p.totalWon||0)+Number(r.totalPay||0);
+ });
+
+ app.ctpCarryFront=round.frontCarry ?? app.ctpCarryFront;
+ app.ctpCarryBack=round.backCarry ?? app.ctpCarryBack;
+}
+
+
+function rebuildAllTotalsFromRounds(){
+ // Reset running totals while keeping player names, seeded starting values are preserved if available.
+ // This function adjusts only rounds saved inside the app.
+ app.players.forEach(p=>{
+   p.totalWon = Number(p.totalWonSeed ?? p.totalWon ?? 0);
+   p.paidToPlay = Number(p.paidToPlaySeed ?? p.paidToPlay ?? 0);
+   p.tripPaid = Number(p.tripPaidSeed ?? p.tripPaid ?? 0);
+   p.scores = p.seedScores ? [...p.seedScores] : (p.scores || []);
+   recalcReq(p);
+ });
+
+ app.ctpCarryFront = 0;
+ app.ctpCarryBack = 0;
+
+ app.rounds.forEach(rd=>{
+   rd.rows.forEach(r=>{
+     const p=getPlayer(r.name);
+     if(r.score!==null && r.score!==undefined){
+       p.scores.push(r.score);
+       recalcReq(p);
+     }
+     if(r.paid){
+       p.paidToPlay=(p.paidToPlay||0)+5;
+     }
+     if(r.trip){
+       p.tripPaid=(p.tripPaid||0)+5;
+     }
+     p.totalWon=(p.totalWon||0)+Number(r.totalPay||0);
+   });
+
+   app.ctpCarryFront = rd.frontCarry ?? app.ctpCarryFront;
+   app.ctpCarryBack = rd.backCarry ?? app.ctpCarryBack;
+ });
+}
+
+function deleteRound(index){
+ const rd=app.rounds[index];
+ if(!rd) return alert("Round not found.");
+
+ const ok=confirm("Delete the saved round from " + formatDate(rd.date) + "? This cannot be undone.");
+ if(!ok) return;
+
+ app.rounds.splice(index,1);
+ editingRoundIndex=null;
+ rebuildPlayerTotalsFromSavedHistory();
+ save();
+ renderAll();
+ alert("Round deleted.");
+}
+
+function loadRoundForEditing(index){
+ const rd=app.rounds[index];
+ if(!rd) return alert("Round not found.");
+
+ editingRoundIndex=index;
+ app.currentRoundDate=rd.date;
+ app.currentWeekPlayers=[...new Set(rd.rows.map(r=>r.name))];
+ app.selected=[...app.currentWeekPlayers];
+
+ renderAll();
+ showTab('roundTab', document.querySelectorAll('.tab')[1]);
+
+ setTimeout(()=>{
+   if(document.getElementById("ctpFrontHole")) document.getElementById("ctpFrontHole").value=rd.frontHole || "3";
+   if(document.getElementById("ctpBackHole")) document.getElementById("ctpBackHole").value=rd.backHole || "11";
+   if(document.getElementById("ctpFront")) document.getElementById("ctpFront").value=rd.front || "";
+   if(document.getElementById("ctpBack")) document.getElementById("ctpBack").value=rd.back || "";
+   if(document.getElementById("frontCtpPaidOverride")) document.getElementById("frontCtpPaidOverride").value=rd.frontCtpPaidOverride ?? "";
+   if(document.getElementById("backCtpPaidOverride")) document.getElementById("backCtpPaidOverride").value=rd.backCtpPaidOverride ?? "";
+
+   rd.rows.forEach((r,i)=>{
+     if(document.getElementById("playPaid_"+i)) document.getElementById("playPaid_"+i).checked=!!r.paid;
+     if(document.getElementById("tripPaid_"+i)) document.getElementById("tripPaid_"+i).checked=!!r.trip;
+     if(document.getElementById("score_"+i)) document.getElementById("score_"+i).value=r.score ?? "";
+     if(document.getElementById("req_"+i)) document.getElementById("req_"+i).value=r.req ?? "";
+     updateNet(i);
+   });
+
+   const notice=document.getElementById("editingRoundNotice");
+   if(notice) notice.textContent="Editing saved round from " + formatDate(rd.date) + ". Click Save Round to update this past week.";
+   calculateRoundPreview();
+ },50);
+}
+
+function cancelEditRound(){
+ editingRoundIndex=null;
+ const notice=document.getElementById("editingRoundNotice");
+ if(notice) notice.textContent="";
+ renderAll();
+}
+
+function calculatePayouts(rows){
+ const paidPlayers=rows.filter(r=>r.paid).length,
+       payouts=purseTable[paidPlayers]||[],
+       eligible=rows.filter(r=>r.paid&&r.score!==null).sort((a,b)=>b.net-a.net);
+
+ let rank=0,lastNet=null,payIndex=0;
+
+ eligible.forEach((r,idx)=>{
+   if(lastNet===null||r.net<lastNet){
+     rank=idx+1;
+     payIndex=rank-1;
+     lastNet=r.net;
+   }
+   r.place=rank;
+   if(payIndex<payouts.length) r.pointsPay=payouts[payIndex]||0;
+ });
+
+ const front=document.getElementById("ctpFront").value,
+       back=document.getElementById("ctpBack").value,
+       frontHole=document.getElementById("ctpFrontHole").value,
+       backHole=document.getElementById("ctpBackHole").value;
+
+ // $1 per paid player goes to front CTP and $1 per paid player goes to back CTP.
+ const frontPot=Number(app.ctpCarryFront||0)+paidPlayers;
+ const backPot=Number(app.ctpCarryBack||0)+paidPlayers;
+
+ const frontOverride=document.getElementById("frontCtpPaidOverride")?.value ?? "";
+ const backOverride=document.getElementById("backCtpPaidOverride")?.value ?? "";
+
+ // If a side has no winner, it pays $0 and the pot rolls over.
+ // If a side has a winner, it pays the full pot unless manually adjusted.
+ const frontPaid=front ? (frontOverride!=="" ? Number(frontOverride||0) : frontPot) : 0;
+ const backPaid=back ? (backOverride!=="" ? Number(backOverride||0) : backPot) : 0;
+
+ rows.forEach(r=>{
+   if(r.name===front) r.ctpPay+=frontPaid;
+   if(r.name===back) r.ctpPay+=backPaid;
+   r.totalPay=(r.pointsPay||0)+(r.ctpPay||0);
+ });
+
+ return {
+   rows,
+   paidPlayers,
+   pointsFund:paidPlayers*3,
+   front,
+   back,
+   frontHole,
+   backHole,
+   frontPot,
+   backPot,
+   frontPaid,
+   backPaid,
+   frontCarry:Math.max(0,frontPot-frontPaid),
+   backCarry:Math.max(0,backPot-backPaid),
+   frontCtpPaidOverride:frontOverride,
+   backCtpPaidOverride:backOverride
+ };
+}
+function calculateRoundPreview(){const data=calculatePayouts(collectRound());renderRoundPreview(data);return data}
+function ordinal(n){return n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th'} 
+function renderRoundPreview(data){const box=document.getElementById("roundPreview");let out=`<h3>Round Payout Preview</h3><p class="note">${data.paidPlayers} players · Points Fund ${money(data.pointsFund)} · Front CTP H${data.frontHole}: Pot ${money(data.frontPot)}, Paid ${money(data.frontPaid)}, Carry ${money(data.frontCarry)} · Back CTP H${data.backHole}: Pot ${money(data.backPot)}, Paid ${money(data.backPaid)}, Carry ${money(data.backCarry)}</p><table><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Pts Req</th><th>Net</th><th>Points $</th><th>CTP/HIO</th><th>Total Won</th><th>Trip Today</th></tr></thead><tbody>`;data.rows.filter(r=>r.paid||r.score!==null||r.trip).sort((a,b)=>(b.totalPay-a.totalPay)||(b.net??-999)-(a.net??-999)).forEach((r,i)=>{out+=`<tr class="${r.place===1?'place1':r.place===2?'place2':r.place===3?'place3':''}"><td>${i+1}</td><td>${r.name}${r.place?' ('+ordinal(r.place)+')':''}</td><td>${r.score??'-'}</td><td>${r.req.toFixed(1)}</td><td>${r.net===null?'-':(r.net>=0?'+':'')+r.net.toFixed(1)}</td><td>${money(r.pointsPay)}</td><td>${money(r.ctpPay)}</td><td>${money(r.totalPay)}</td><td>${r.trip?money(5):money(0)}</td></tr>`});box.innerHTML=out+'</tbody></table>'}
+function saveRound(){
+ const data=calculateRoundPreview(),date=app.currentRoundDate||new Date().toISOString().slice(0,10);
+ const newRound={date,...data};
+
+ if(editingRoundIndex!==null && app.rounds[editingRoundIndex]){
+   const oldRound=app.rounds[editingRoundIndex];
+
+   undoRoundFromPlayerTotals(oldRound);
+   app.rounds[editingRoundIndex]=newRound;
+   applyRoundToPlayerTotals(newRound);
+
+   editingRoundIndex=null;
+   save();
+   renderAll();
+   alert("Past round updated.");
+   return;
+ }
+
+ applyRoundToPlayerTotals(newRound);
+ app.rounds.push(newRound);
+ save();
+ renderAll();
+ alert("Round saved.");
+}
+
+function renderPointsLockManager(){
+ const box=document.getElementById("pointsLockBody");
+ if(!box) return;
+
+ let out='<table><thead><tr><th>Player</th><th>Points Required</th><th>Auto-Calc Locked?</th></tr></thead><tbody>';
+ [...app.players].sort((a,b)=>a.name.localeCompare(b.name)).forEach((p,i)=>{
+   out += '<tr>' +
+     '<td>'+p.name+'</td>' +
+     '<td><input class="score-input" type="number" step="0.5" id="lockPts_'+i+'" data-name="'+escapeHtml(p.name)+'" value="'+formatPts(p.ptsReq)+'"></td>' +
+     '<td><input type="checkbox" id="lockCheck_'+i+'" '+(p.lockedPts?'checked':'')+'></td>' +
+     '</tr>';
+ });
+ out += '</tbody></table>';
+ box.innerHTML=out;
+}
+
+function selectAllPointLocks(){
+ document.querySelectorAll('[id^="lockCheck_"]').forEach(cb => cb.checked = true);
+}
+
+function clearAllPointLocks(){
+ document.querySelectorAll('[id^="lockCheck_"]').forEach(cb => cb.checked = false);
+}
+
+function recalculateLockedPoints(){
+ app.players.forEach(p=>{
+   if(p.lockedPts !== false){
+     recalcReq(p);
+   }
+ });
+ save();
+ renderAll();
+ alert("Locked points required have been recalculated.");
+}
+
+function savePointsLocks(){
+ const rows=[...app.players].sort((a,b)=>a.name.localeCompare(b.name));
+ rows.forEach((p,i)=>{
+   const ptsBox=document.getElementById("lockPts_"+i);
+   const lockBox=document.getElementById("lockCheck_"+i);
+   if(!ptsBox || !lockBox) return;
+   p.lockedPts=lockBox.checked;
+   if(p.lockedPts){
+     recalcReq(p);
+   } else {
+     p.ptsReq=roundDownHalf(Number(ptsBox.value||0));
+   }
+ });
+ save();
+ renderAll();
+ alert("Points required and locks saved.");
+}
+
+
+function recalculateAllPointsRequired(){
+ app.players.forEach(p=>{
+   if(p.lockedPts !== false){
+     recalcReq(p);
+   }
+ });
+ save();
+ renderAll();
+ alert("All locked/auto-calculated points required have been recalculated.");
+}
+
+
+function rebuildPlayerTotalsFromSavedHistory(){
+  app.players.forEach(p=>{
+    p.totalWon = Number(p.totalWonSeed || 0);
+    p.paidToPlay = Number(p.paidToPlaySeed || 0);
+    p.tripPaid = Number(p.tripPaidSeed || 0);
+    p.scores = [...(p.seedScores || [])];
+    recalcReq(p);
+  });
+
+  app.ctpCarryFront = 0;
+  app.ctpCarryBack = 0;
+
+  app.rounds.forEach(rd=>{
+    (rd.rows || []).forEach(r=>{
+      const p = getPlayer(r.name);
+
+      if(r.score !== null && r.score !== undefined){
+        p.scores.push(r.score);
+      }
+
+      if(r.paid){
+        p.paidToPlay = Number(p.paidToPlay || 0) + 5;
+      }
+
+      if(r.trip){
+        p.tripPaid = Number(p.tripPaid || 0) + 5;
+      }
+
+      p.totalWon = Number(p.totalWon || 0) + Number(r.totalPay || 0);
+      recalcReq(p);
+    });
+
+    app.ctpCarryFront = rd.frontCarry ?? app.ctpCarryFront;
+    app.ctpCarryBack = rd.backCarry ?? app.ctpCarryBack;
+  });
+
+  (app.tripEntries || []).forEach(entry=>{
+    (entry.payments || []).forEach(pay=>{
+      const p=getPlayer(pay.name);
+      p.tripPaid = Number(p.tripPaid || 0) + Number(pay.amount || 0);
+    });
+  });
+}
+
+function renderLeaderboard(){rebuildPlayerTotalsFromSavedHistory(); const body=document.getElementById("leaderboardBody");body.innerHTML="";const players=[...app.players].sort((a,b)=>(b.totalWon||0)-(a.totalWon||0)||(b.ptsReq||0)-(a.ptsReq||0)||a.name.localeCompare(b.name));players.forEach((p,i)=>{const r=document.createElement("tr");r.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td>${money(p.totalWon)}</td><td>${formatPts(p.ptsReq)}</td><td>${p.rounds||0}</td><td>${money(p.paidToPlay||0)}</td><td>${money(p.tripPaid||0)}</td>`;body.appendChild(r)});const ref=document.getElementById("playerReferenceBody");ref.innerHTML="";[...app.players].sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{const d=document.createElement("div");d.className="card";const pills=(p.scores||[]).slice(-8).map(s=>`<span class="pill">${fmt(s)}</span>`).join("")||'<span class="note">No scores yet</span>';d.innerHTML=`<strong>${p.name}</strong><br>Pts Req: <strong>${formatPts(p.ptsReq)}</strong> · Total ${money(p.totalWon)} · ${p.rounds||0} rds · Trip ${money(p.tripPaid)}<br>${pills}`;ref.appendChild(d)});const trip=app.players.reduce((s,p)=>s+Number(p.tripPaid||0),0),paid=app.players.reduce((s,p)=>s+Number(p.paidToPlay||0),0),won=app.players.reduce((s,p)=>s+Number(p.totalWon||0),0);app.holeInOneFund=Number(document.getElementById("holeInOneFund")?.value||app.holeInOneFund||100);document.getElementById("fundBalancesBody").innerHTML=`<div class="controls-row"><div class="fund-card"><div>TRIP FUND</div><div class="amount">${money(trip)}</div></div><div class="fund-card"><div>PAID TO PLAY</div><div class="amount">${money(paid)}</div></div><div class="fund-card"><div>TOTAL WON</div><div class="amount">${money(won)}</div></div><div class="fund-card"><div>CTP CARRYOVER</div><div class="amount">${money(app.ctpCarryFront+app.ctpCarryBack)}</div></div><div class="fund-card"><div>HOLE-IN-ONE</div><div class="amount">${money(app.holeInOneFund)}</div></div></div>`}
+function renderTripFund(){const box=document.getElementById("tripPaymentsBody");if(!box)return;let out='<table><thead><tr><th>Paid?</th><th>Golfer</th><th>Amount</th></tr></thead><tbody>';app.golfers.forEach((n,i)=>{out+=`<tr><td><input type="checkbox" id="tripOnly_${i}"></td><td>${n}</td><td><input class="money-input" type="number" id="tripOnlyAmt_${i}" value="5"></td></tr>`});box.innerHTML=out+'</tbody></table>';const body=document.getElementById("tripSummaryBody");body.innerHTML="";[...app.players].sort((a,b)=>(b.tripPaid||0)-(a.tripPaid||0)||a.name.localeCompare(b.name)).forEach(p=>{const r=document.createElement("tr");r.innerHTML=`<td>${p.name}</td><td>${Math.round((p.tripPaid||0)/5)}</td><td>${money(p.tripPaid)}</td>`;body.appendChild(r)});document.getElementById("tripTotalText").textContent="Current trip fund total: "+money(app.players.reduce((s,p)=>s+Number(p.tripPaid||0),0))}
+function saveTripOnlyPayments(){const payments=[];app.golfers.forEach((n,i)=>{if(document.getElementById("tripOnly_"+i).checked){const amt=Number(document.getElementById("tripOnlyAmt_"+i).value||5);getPlayer(n).tripPaid+=amt;payments.push({name:n,amount:amt})}});if(!payments.length)return alert("No payments selected.");app.tripEntries.push({note:document.getElementById("tripNote").value||new Date().toLocaleDateString(),date:new Date().toLocaleDateString(),payments});save();renderAll();alert("Trip payments saved.")}
+function clearTripOnly(){if(!confirm("Clear separate trip entries? This will not remove seeded trip totals or round trip payments."))return;app.tripEntries=[];save();renderAll()}
+function renderReports(){const box=document.getElementById("reportsBody");box.innerHTML="";if(!app.rounds.length){box.innerHTML='<p class="note">No saved rounds yet.</p>';return}app.rounds.map((rd,idx)=>({rd,idx})).slice().reverse().forEach(item=>{const rd=item.rd, actualIndex=item.idx;const d=document.createElement("div");d.className="card";let out=`<h3>${rd.date} · ${rd.paidPlayers} players</h3><button class="secondary no-print" onclick="loadRoundForEditing(${actualIndex})">Edit This Week</button><button class="danger no-print" onclick="deleteRound(${actualIndex})">Delete This Week</button><p>Points Fund ${money(rd.pointsFund)} · Front CTP H${rd.frontHole||""}: Pot ${money(rd.frontPot)}, Paid ${money(rd.frontPaid||0)} ${rd.front?'to '+rd.front:'rollover'} · Back CTP H${rd.backHole||""}: Pot ${money(rd.backPot)}, Paid ${money(rd.backPaid||0)} ${rd.back?'to '+rd.back:'rollover'}</p><table><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Pts Req</th><th>Net</th><th>Points $</th><th>CTP/HIO</th><th>Total Won</th><th>Trip Today</th></tr></thead><tbody>`;rd.rows.filter(r=>r.paid||r.score!==null||r.trip).sort((a,b)=>(b.totalPay-a.totalPay)||(b.net??-999)-(a.net??-999)).forEach((r,i)=>{out+=`<tr><td>${i+1}</td><td>${r.name}${r.place?' ('+ordinal(r.place)+')':''}</td><td>${r.score??'-'}</td><td>${Number(r.req).toFixed(1)}</td><td>${r.net===null?'-':(r.net>=0?'+':'')+r.net.toFixed(1)}</td><td>${money(r.pointsPay)}</td><td>${money(r.ctpPay)}</td><td>${money(r.totalPay)}</td><td>${r.trip?money(5):money(0)}</td></tr>`});d.innerHTML=out+'</tbody></table>';box.appendChild(d)})}
+
+function applyJune14PaidCorrectionOnce(){
+ if(app.june14JenniferAndriaPaidFixApplied) return;
+ const targetNames=new Set(["Jennifer Dean","Andria McHargue"]);
+ let changed=false;
+
+ (app.rounds||[]).forEach(rd=>{
+   const dateStr=String(rd.date||"");
+   const isJune14=dateStr.includes("2026-06-14")||dateStr.includes("06/14/2026")||dateStr.includes("6/14/2026")||dateStr.includes("6-14-26")||dateStr.includes("06-14-26");
+   if(!isJune14) return;
+
+   (rd.rows||[]).forEach(r=>{
+     if(targetNames.has(r.name)&&r.paid){
+       r.paid=false;
+       changed=true;
+     }
+   });
+
+   if(changed){
+     rd.paidPlayers=(rd.rows||[]).filter(r=>r.paid).length;
+     rd.pointsFund=rd.paidPlayers*3;
+   }
+ });
+
+ app.june14JenniferAndriaPaidFixApplied=true;
+ if(changed) rebuildPlayerTotalsFromSavedHistory();
+ save();
+}
+
+
+
+function ensureJune14RoundExists(){
+ const exists=(app.rounds||[]).some(rd=>{
+   const d=String(rd.date||"");
+   return d==="2026-06-14" || d.includes("06/14/2026") || d.includes("6/14/2026");
+ });
+
+ if(exists) return;
+
+ const round={
+   date:"2026-06-14",
+   paidPlayers:10,
+   pointsFund:30,
+   front:"Julie Parker",
+   back:"",
+   frontHole:"6",
+   backHole:"15",
+   frontPot:10,
+   backPot:30,
+   frontPaid:10,
+   backPaid:0,
+   frontCarry:0,
+   backCarry:30,
+   frontCtpPaidOverride:"",
+   backCtpPaidOverride:"",
+   rows:[
+     {name:"Tami Divietro",paid:true,trip:true,score:19,req:15,net:4,pointsPay:15,ctpPay:0,totalPay:15},
+     {name:"Michele Lang",paid:true,trip:true,score:11.5,req:9.5,net:2,pointsPay:10,ctpPay:0,totalPay:10},
+     {name:"Julie Parker",paid:true,trip:true,score:8,req:7.5,net:0.5,pointsPay:0,ctpPay:10,totalPay:10},
+     {name:"Mary McCormick",paid:true,trip:true,score:13,req:12,net:1,pointsPay:5,ctpPay:0,totalPay:5},
+     {name:"Candy Crim",paid:true,trip:true,score:11.5,req:11,net:0.5,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Rebekah Wills",paid:true,trip:true,score:6.5,req:6,net:0.5,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Tania Bobe",paid:true,trip:true,score:3.5,req:3,net:0.5,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Helen Norman",paid:true,trip:true,score:11,req:11,net:0,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Terrie Springer",paid:true,trip:true,score:4.5,req:4.5,net:0,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Andria McHargue",paid:false,trip:false,score:0,req:0,net:0,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Jennifer Dean",paid:false,trip:true,score:0,req:0,net:0,pointsPay:0,ctpPay:0,totalPay:0},
+     {name:"Dara Taylor",paid:true,trip:true,score:16,req:18,net:-2,pointsPay:0,ctpPay:0,totalPay:0}
+   ]
+ };
+
+ app.rounds.push(round);
+ app.currentRoundDate="2026-06-14";
+ app.currentWeekPlayers=round.rows.map(r=>r.name);
+ app.selected=[...app.currentWeekPlayers];
+
+ if(typeof rebuildPlayerTotalsFromSavedHistory==="function"){
+   rebuildPlayerTotalsFromSavedHistory();
+ }
+ save();
+}
+
+function renderAll(){renderPlayers();renderTeamDropdowns();renderTeamSetup();renderRoundDateDisplays();renderRoundEntry();renderLeaderboard();renderPointsLockManager();renderTripFund();renderReports();previewPairings()}
+ensureJune14RoundExists();applyJune14PaidCorrectionOnce();ensureJune14RoundExists();renderAll();document.addEventListener("input",e=>{if(e.target.id==="holeInOneFund"){app.holeInOneFund=Number(e.target.value||0);save();renderLeaderboard()}})
+</script>
+
+</body></html>
